@@ -9,3 +9,15 @@ plugins {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+buildscript {
+    val kotlin_version by extra("1.8.0")
+    // ...
+    val sqlDelightVersion = "1.5.5"
+
+    dependencies {
+        // ...
+        classpath("com.squareup.sqldelight:gradle-plugin:$sqlDelightVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+    }
+}

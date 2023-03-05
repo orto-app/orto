@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orto</string>
+
+    <string name="successful">Successful</string>
+    <string name="unsuccessful">Unsuccessful</string>
+    <string name="no_data">No data</string>
+
+    <string name="note_title_field">Note title: %s</string>
+    <string name="note_url_field">Note url: %s</string>
+    <string name="note_content_field">Note content: %s</string>
+</resources>

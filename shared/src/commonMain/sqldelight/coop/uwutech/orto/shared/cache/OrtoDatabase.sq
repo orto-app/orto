@@ -1,0 +1,66 @@
+CREATE TABLE Tag (
+    id   TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    parent_id  TEXT DEFAULT NULL,
+    FOREIGN KEY (parent_id) REFERENCES Tag(id)
+);
+
+CREATE TABLE Note (
+    id   TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    url TEXT,
+    image TEXT,
+    content TEXT
+);
+-- https://kotlinlang.org/docs/multiplatform-mobile-ktor-sqldelight.html#generate-the-database-api
+CREATE TABLE Notes_Tags(
+    note_id TEXT NOT NULL,
+    tag_id TEXT NOT NULL,
+    PRIMARY KEY (note_id, tag_id),
+    FOREIGN KEY (note_id) REFERENCES Note(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE CASCADE
+);
+
+removeAllRelations:
+DELETE FROM Notes_Tags;
+
+removeAllTags:
+DELETE FROM Tag;
+
+removeAllNotes:
+DELETE FROM Note;
+
+insertNoteTagRelation:
+INSERT INTO Notes_Tags(note_id, tag_id)
+VALUES(?, ?);
+
+insertTag:
+INSERT INTO Tag(id, name)
+VALUES(?, ?);
+
+insertNote:
+INSERT INTO Note(id, title, url, image, content)
+VALUES(?, ?, ?, ?, ?);
+
+getAllNotes:
+SELECT * FROM Note;
+
+getAllTags:
+SELECT * FROM Tag
+ORDER BY name ASC;
+
+getTagByName:
+SELECT * FROM Tag
+WHERE name = ?;
+
+getTagsForNote:
+SELECT DISTINCT Tag.id, Tag.name, Tag.parent_id
+FROM Tag
+JOIN Notes_Tags ON Tag.id = tag_id
+JOIN Note ON Notes_Tags.note_id = ?;
+
+getNotesForTag:
+SELECT DISTINCT Note.id, Note.title, Note.url, Note.image, Note.content
+FROM Note
+JOIN Notes_Tags ON Note.id = note_id
+JOIN Tag ON Notes_Tags.tag_id = ?;
