@@ -2,8 +2,8 @@ package coop.uwutech.orto.shared.di
 
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import coop.uwutech.orto.AndroidPlatform
-import coop.uwutech.orto.Platform
 import coop.uwutech.orto.shared.cache.OrtoDatabase
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 actual object PlatformModule {
@@ -15,6 +15,6 @@ actual object PlatformModule {
                 "orto.db"
             )
         }
-        single<Platform> { AndroidPlatform() }
+        singleOf(::AndroidPlatform)
     }
 }

@@ -15,7 +15,7 @@ class TagRepository(private val ioDispatcher: CoroutineDispatcher = Dispatchers.
 
     fun insertTag(tag: Tag) = database.insertTag(tag)
 
-    fun getAllTags() = database.getAllTagsAsFlow()
+    val allTags = database.getAllTagsAsFlow()
 
     fun getTags(note: Note) = database.getTagsAsFlow(note)
 }
