@@ -11,13 +11,25 @@ tasks.register("clean", Delete::class) {
 }
 
 buildscript {
-    val kotlin_version by extra("1.8.0")
-    // ...
+    val kotlinVersion by extra("1.8.0")
+    val navVersion = "2.5.3"
     val sqlDelightVersion = "1.5.5"
 
     dependencies {
-        // ...
         classpath("com.squareup.sqldelight:gradle-plugin:$sqlDelightVersion")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion")
+    }
+
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
+repositories {
+    google()
+    gradlePluginPortal()
+    mavenCentral()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")}

@@ -1,6 +1,7 @@
 package coop.uwutech.orto.shared.cache
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -17,7 +18,7 @@ class NoteRepository(private val ioDispatcher: CoroutineDispatcher = Dispatchers
 
     fun createNote(note: Note, tags: Collection<Tag>) = database.createNote(note, tags)
 
-    val allNotes = database.getAllNotesAsFlow()
+    val allNotes: Flow<List<Note>> = database.getAllNotesAsFlow()
 
     fun getNotesForTag(tag: Tag) = database.getNotesAsFlow(tag)
 }

@@ -2,6 +2,7 @@ package coop.uwutech.orto.shared.cache
 
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOne
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
@@ -54,33 +55,33 @@ internal class Database(databaseDriver: SqlDriver): KoinComponent {
 
     internal fun getAllNotes() = dbQuery.getAllNotes()
 
-    internal fun getAllNotesAsFlow(): Flow<Note> {
+    internal fun getAllNotesAsFlow(): Flow<List<Note>> {
         return getAllNotes()
             .asFlow()
-            .mapToOne()
+            .mapToList()
     }
 
     internal fun getNotes(tag: Tag) = dbQuery.getNotesForTag(tag_id = tag.id)
 
-    internal fun getNotesAsFlow(tag: Tag): Flow<Note> {
+    internal fun getNotesAsFlow(tag: Tag): Flow<List<Note>> {
         return getNotes(tag)
             .asFlow()
-            .mapToOne()
+            .mapToList()
     }
 
     internal fun getAllTags() = dbQuery.getAllTags()
 
-    internal fun getAllTagsAsFlow(): Flow<Tag> {
+    internal fun getAllTagsAsFlow(): Flow<List<Tag>> {
         return getAllTags()
             .asFlow()
-            .mapToOne()
+            .mapToList()
     }
 
     internal fun getTags(note: Note) = dbQuery.getTagsForNote(note_id = note.id)
 
-    internal fun getTagsAsFlow(note: Note): Flow<Tag> {
+    internal fun getTagsAsFlow(note: Note): Flow<List<Tag>> {
         return getTags(note)
             .asFlow()
-            .mapToOne()
+            .mapToList()
     }
 }

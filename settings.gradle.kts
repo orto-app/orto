@@ -1,3 +1,5 @@
+import org.gradle.api.internal.initialization.ClassLoaderIds.buildScript
+
 pluginManagement {
     repositories {
         google()
