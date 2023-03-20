@@ -1,19 +1,21 @@
 package coop.uwutech.orto.shared.cache.local
 
+import com.squareup.sqldelight.Query
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import coop.uwutech.orto.shared.cache.Note
 import coop.uwutech.orto.shared.cache.OrtoDatabase
 import coop.uwutech.orto.shared.cache.Tag
+import coop.uwutech.orto.shared.repository.ILocalData
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 
-internal class Database(databaseDriver: SqlDriver): KoinComponent {
+internal class LocalDataImp(databaseDriver: SqlDriver) : KoinComponent, ILocalData {
     private val database = OrtoDatabase(databaseDriver)
     private val dbQuery = database.ortoDatabaseQueries
 
-    internal fun clearDatabase() {
+    override fun clearDatabase() {
         dbQuery.transaction {
             dbQuery.removeAllRelations()
             dbQuery.removeAllTags()
@@ -21,14 +23,15 @@ internal class Database(databaseDriver: SqlDriver): KoinComponent {
         }
     }
 
-    internal fun insertTag(tag: Tag) {
+    override fun insertTag(tag: Tag) {
         dbQuery.insertTag(
             id = tag.id,
-            name = tag.name
+            name = tag.name,
+            parent_id = tag.parent_id
         )
     }
 
-    internal fun insertNote(note: Note) {
+    override fun insertNote(note: Note) {
         dbQuery.insertNote(
             id = note.id,
             title = note.title,
@@ -38,7 +41,7 @@ internal class Database(databaseDriver: SqlDriver): KoinComponent {
         )
     }
 
-    internal fun createNote(note: Note, tags: Collection<Tag>) {
+    override fun createNote(note: Note, tags: Collection<Tag>) {
         dbQuery.transaction {
             insertNote(note)
             tags.forEach {
@@ -55,34 +58,44 @@ internal class Database(databaseDriver: SqlDriver): KoinComponent {
         }
     }
 
-    internal fun getAllNotes() = dbQuery.getAllNotes()
+    private fun _getAllNotes() = dbQuery.getAllNotes()
+    fun getAllNotes() = _getAllNotes().executeAsList()
 
-    internal fun getAllNotesAsFlow(): Flow<List<Note>> {
-        return getAllNotes()
+    override fun getAllNotesAsFlow(): Flow<List<Note>> {
+        return _getAllNotes()
             .asFlow()
             .mapToList()
     }
 
-    internal fun getNotes(tag: Tag) = dbQuery.getNotesForTag(tag_id = tag.id)
+    private fun _getNotesForTag(name: String): Query<Note> {
+        return dbQuery.getNotesForTag(name = name)
+    }
 
-    internal fun getNotesAsFlow(tag: Tag): Flow<List<Note>> {
-        return getNotes(tag)
+    fun getNotesForTag(name: String): List<Note> {
+        return _getNotesForTag(name = name).executeAsList()
+    }
+
+    override fun getNotesForTagAsFlow(tagName: String): Flow<List<Note>> {
+        return _getNotesForTag(tagName)
             .asFlow()
             .mapToList()
     }
 
-    internal fun getAllTags() = dbQuery.getAllTags()
+    private fun _getAllTags() = dbQuery.getAllTags()
 
-    internal fun getAllTagsAsFlow(): Flow<List<Tag>> {
-        return getAllTags()
+    fun getAllTags(): List<Tag> = _getAllTags().executeAsList()
+
+    override fun getAllTagsAsFlow(): Flow<List<Tag>> {
+        return _getAllTags()
             .asFlow()
             .mapToList()
     }
 
-    internal fun getTags(note: Note) = dbQuery.getTagsForNote(note_id = note.id)
+    private fun _getTagsForNote(id: Long) = dbQuery.getTagsForNote(note_id = id)
+    fun getTagsForNote(id: Long): List<Tag> = _getTagsForNote(id).executeAsList()
 
-    internal fun getTagsAsFlow(note: Note): Flow<List<Tag>> {
-        return getTags(note)
+    override fun getTagsForNoteAsFlow(id: Long): Flow<List<Tag>> {
+        return _getTagsForNote(id)
             .asFlow()
             .mapToList()
     }

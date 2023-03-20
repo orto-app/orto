@@ -27,20 +27,12 @@ kotlin {
     cocoapods {
         summary = "Shared data access and business logic module for Orto frontend."
         homepage = "https://codeberg.org/uwutech/Orto"
-        version = "0.1.0"
+        version = Orto.versionName
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
             baseName = "shared"
-            isStatic = false
-            transitiveExport = true
-            embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE)
-
         }
-        // Maps custom Xcode configuration to NativeBuildType
-        xcodeConfigurationToNativeBuildType["debug"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["release"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.RELEASE
-        xcodeConfigurationToNativeBuildType["Preview-D"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG
     }
 
     val jUnitVersion = "4.13.2"
@@ -51,7 +43,7 @@ kotlin {
                 with(Deps.KotlinX) {
                     implementation(datetime)
                 }
-                with (Deps.KotlinX.Coroutines) {
+                with(Deps.KotlinX.Coroutines) {
                     implementation(core)
                 }
                 with(Deps.Ktor) {
@@ -66,7 +58,6 @@ kotlin {
                 }
                 with(Deps.Koin) {
                     implementation(core)
-                    implementation(android)
                 }
             }
         }
@@ -78,10 +69,6 @@ kotlin {
                 with (Deps.KotlinX.Coroutines) {
                     implementation(test)
                 }
-                with(Deps.SqlDelight) {
-                    implementation(sqlite)
-                    implementation(jdbc)
-                }
                 with(Deps.Mockk) {
                     implementation(common)
                 }
@@ -92,13 +79,16 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                with (Deps.KotlinX.Coroutines) {
+                with(Deps.KotlinX.Coroutines) {
                     implementation(android)
                 }
                 with(Deps.Ktor) {
                     implementation(android)
                 }
                 with(Deps.SqlDelight) {
+                    implementation(android)
+                }
+                with(Deps.Koin) {
                     implementation(android)
                 }
             }
@@ -111,6 +101,9 @@ kotlin {
                 implementation("androidx.test:core:1.5.0")
                 with(Deps.Mockk) {
                     implementation(jvm)
+                }
+                with(Deps.SqlDelight) {
+                    implementation(sqlite)
                 }
             }
         }
@@ -136,6 +129,11 @@ kotlin {
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting
         val iosTest by creating {
+            dependencies {
+                with(Deps.SqlDelight) {
+                    implementation(sqlite)
+                }
+            }
             dependsOn(commonTest)
             iosX64Test.dependsOn(this)
             iosArm64Test.dependsOn(this)

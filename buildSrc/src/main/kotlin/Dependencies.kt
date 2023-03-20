@@ -1,4 +1,4 @@
-object App {
+object Orto {
     const val versionCode = 1
     const val versionName = "1.0.0"
 }
@@ -127,7 +127,6 @@ object Deps {
         const val coroutines =
             "com.squareup.sqldelight:coroutines-extensions:${Versions.sqldelight}"
         const val sqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqldelight}"
-        const val jdbc = "com.squareup.sqldelight:jdbc-driver:${Versions.sqldelight}"
         const val android = "com.squareup.sqldelight:android-driver:${Versions.sqldelight}"
         const val native = "com.squareup.sqldelight:native-driver:${Versions.sqldelight}"
     }

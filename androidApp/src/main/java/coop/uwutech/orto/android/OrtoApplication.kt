@@ -1,26 +1,22 @@
 package coop.uwutech.orto.android
 
 import android.app.Application
-import coop.uwutech.orto.android.di.appModule
-import coop.uwutech.orto.shared.di.DatabaseModule.databaseModule
-import coop.uwutech.orto.shared.di.PlatformModule.platformModule
+import coop.uwutech.orto.android.di.viewModelModule
+import coop.uwutech.orto.shared.di.initKoin
+import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
-class OrtoApplication : Application() {
+class OrtoApplication: Application() {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
-            // Log Koin into Android logger
-            androidLogger()
-            // Reference Android context
+
+        initKoin {
+            androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             androidContext(this@OrtoApplication)
-            // Load modules
             modules(
-                appModule,
-                platformModule,
-                databaseModule
+                viewModelModule
             )
         }
     }

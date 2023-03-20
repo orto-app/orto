@@ -11,8 +11,8 @@ android {
         applicationId = "coop.uwutech.orto.android"
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
-        versionCode = App.versionCode
-        versionName = App.versionName
+        versionCode = Orto.versionCode
+        versionName = Orto.versionName
     }
     buildFeatures {
         compose = true
@@ -60,6 +60,7 @@ dependencies {
         implementation(uiToolingPreview)
         implementation(activity)
         implementation(viewmodel)
+        implementation(coil)
     }
     debugImplementation("androidx.compose.ui:ui-tooling:${Versions.composeUi}")
 

@@ -1,4 +1,4 @@
-package coop.uwutech.orto.android.components
+package coop.uwutech.orto.android.ui.components
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
