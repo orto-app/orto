@@ -1,9 +1,10 @@
-package coop.uwutech.orto.shared.cache
+package coop.uwutech.orto.shared.cache.local
 
 import co.touchlab.sqliter.DatabaseConfiguration
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import com.squareup.sqldelight.drivers.native.wrapConnection
+import coop.uwutech.orto.shared.cache.OrtoDatabase
 
 private var index = 0
 

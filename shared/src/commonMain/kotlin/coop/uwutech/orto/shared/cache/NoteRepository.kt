@@ -1,18 +1,13 @@
 package coop.uwutech.orto.shared.cache
 
-import kotlinx.coroutines.*
+import coop.uwutech.orto.shared.cache.local.Database
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class NoteRepository(private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default) :
+class NoteRepository() :
     KoinComponent {
-    private val scope = CoroutineScope(ioDispatcher)
     private val database: Database by inject()
-
-    fun initialize() = scope.async {
-        // ...
-    }
 
     fun insertNote(note: Note) = database.insertNote(note)
 

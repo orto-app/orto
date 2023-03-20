@@ -10,3 +10,7 @@ class SampleNoteCardUiStateProvider : PreviewParameterProvider<Result.NoteCardUi
         Result.NoteCardUiState(Note("UUID2", "title2", "url2", "img2", "content2"), listOf("tag3", "tag4"))
     )
 }
+
+class SampleTagLabelProvider : PreviewParameterProvider<String> {
+    override val values = sequenceOf("tag1", "tag2", "tag3", "tag4")
+}

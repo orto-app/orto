@@ -50,7 +50,7 @@ fun NoteCard(@PreviewParameter(SampleNoteCardUiStateProvider::class) state: Resu
             //Image()
             Row {
                 for (tag in state.tags) {
-                    Text(text = "#$tag")
+                    TagLabel(tagName = tag)
                 }
             }
         }
@@ -70,7 +70,6 @@ fun NotesList(notes: List<Result>) {
                 )
                 is Result.Error -> Text("Error")
                 is Result.NoteCardUiState -> NoteCard(result)
-                else -> {}
             }
         }
     }

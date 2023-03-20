@@ -1,9 +1,11 @@
-package coop.uwutech.orto.shared.cache
+package coop.uwutech.orto.shared.cache.local
 
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOne
+import coop.uwutech.orto.shared.cache.Note
+import coop.uwutech.orto.shared.cache.OrtoDatabase
+import coop.uwutech.orto.shared.cache.Tag
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 

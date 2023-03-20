@@ -1,17 +1,12 @@
 package coop.uwutech.orto.shared.cache
 
-import kotlinx.coroutines.*
+import coop.uwutech.orto.shared.cache.local.Database
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class TagRepository(private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default) :
+class TagRepository() :
     KoinComponent {
-    private val scope = CoroutineScope(ioDispatcher)
     private val database: Database by inject()
-
-    fun initialize() = scope.async {
-        // ...
-    }
 
     fun insertTag(tag: Tag) = database.insertTag(tag)
 

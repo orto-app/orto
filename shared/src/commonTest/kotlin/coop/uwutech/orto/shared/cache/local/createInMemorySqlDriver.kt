@@ -1,4 +1,4 @@
-package coop.uwutech.orto.shared.cache
+package coop.uwutech.orto.shared.cache.local
 
 import com.squareup.sqldelight.db.SqlDriver
 

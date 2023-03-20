@@ -1,8 +1,8 @@
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization")
     id("com.android.library")
-    kotlin("plugin.serialization") version "1.8.10"
     id("com.squareup.sqldelight")
 }
 
@@ -14,14 +14,20 @@ kotlin {
             }
         }
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "shared"
+        }
+    }
 
     cocoapods {
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
-        version = "1.0"
+        summary = "Shared data access and business logic module for Orto's frontends."
+        homepage = "https://codeberg.org/uwutech/Orto"
+        version = "0.1.0"
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
@@ -37,26 +43,31 @@ kotlin {
         xcodeConfigurationToNativeBuildType["Preview-D"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG
     }
 
-    val coroutinesVersion = "1.6.4"
-    val ktorVersion = "2.2.1"
-    val sqlDelightVersion = "1.5.5"
-    val dateTimeVersion = "0.4.0"
-    val mockkVersion = "1.12.1"
-    val mockkJvmVersion = "1.13.2"
     val jUnitVersion = "4.13.2"
-    val koinVersion = "3.3.0"
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("com.squareup.sqldelight:runtime:$sqlDelightVersion")
-                implementation("com.squareup.sqldelight:coroutines-extensions:$sqlDelightVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$dateTimeVersion")
-                implementation("io.insert-koin:koin-core:$koinVersion")
+                with(Deps.KotlinX) {
+                    implementation(datetime)
+                }
+                with (Deps.KotlinX.Coroutines) {
+                    implementation(core)
+                }
+                with(Deps.Ktor) {
+                    implementation(core)
+                    implementation(content)
+                    implementation(serializationJson)
+                    implementation(logging)
+                }
+                with(Deps.SqlDelight) {
+                    implementation(runtime)
+                    implementation(coroutines)
+                }
+                with(Deps.Koin) {
+                    implementation(core)
+                    implementation(android)
+                }
             }
         }
         val commonTest by getting {
@@ -64,17 +75,32 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
-                implementation("com.squareup.sqldelight:sqlite-driver:$sqlDelightVersion")
-                implementation("com.squareup.sqldelight:jdbc-driver:$sqlDelightVersion")
-                implementation("io.insert-koin:koin-test:$koinVersion")
-                implementation("io.mockk:mockk-common:${mockkVersion}")
+                with (Deps.KotlinX.Coroutines) {
+                    implementation(test)
+                }
+                with(Deps.SqlDelight) {
+                    implementation(sqlite)
+                    implementation(jdbc)
+                }
+                with(Deps.Mockk) {
+                    implementation(common)
+                }
+                with(Deps.Koin) {
+                    implementation(test)
+                }
             }
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:$ktorVersion")
-                implementation("com.squareup.sqldelight:android-driver:$sqlDelightVersion")
+                with (Deps.KotlinX.Coroutines) {
+                    implementation(android)
+                }
+                with(Deps.Ktor) {
+                    implementation(android)
+                }
+                with(Deps.SqlDelight) {
+                    implementation(android)
+                }
             }
         }
         val androidUnitTest by getting {
@@ -83,29 +109,48 @@ kotlin {
                 implementation("junit:junit:${jUnitVersion}")
                 //need to add
                 implementation("androidx.test:core:1.5.0")
-                implementation("io.mockk:mockk-jvm:${mockkJvmVersion}")
+                with(Deps.Mockk) {
+                    implementation(jvm)
+                }
             }
         }
 
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependsOn(commonMain)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
-                implementation("com.squareup.sqldelight:native-driver:$sqlDelightVersion")
+                with(Deps.Ktor) {
+                    implementation(darwin)
+                }
+                with(Deps.SqlDelight) {
+                    implementation(native)
+                }
             }
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        val iosSimulatorArm64Test by getting
         val iosTest by creating {
             dependsOn(commonTest)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
+            iosSimulatorArm64Test.dependsOn(this)
         }
     }
 }
 
 android {
     namespace = "coop.uwutech.orto"
-    compileSdk = 33
+    compileSdk = Versions.compileSdk
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdk = 24
-        targetSdk = 33
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
     }
 }
 
