@@ -25,7 +25,7 @@ kotlin {
     }
 
     cocoapods {
-        summary = "Shared data access and business logic module for Orto's frontends."
+        summary = "Shared data access and business logic module for Orto frontend."
         homepage = "https://codeberg.org/uwutech/Orto"
         version = "0.1.0"
         ios.deploymentTarget = "14.1"
