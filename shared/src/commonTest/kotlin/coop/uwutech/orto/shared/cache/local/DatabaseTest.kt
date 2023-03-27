@@ -1,5 +1,6 @@
 package coop.uwutech.orto.shared.cache.local
 
+import coop.uwutech.orto.TestUtil
 import coop.uwutech.orto.TestUtil.Companion.ALL_TAGS
 import coop.uwutech.orto.TestUtil.Companion.SINGLE_NOTE
 import coop.uwutech.orto.TestUtil.Companion.SINGLE_TAG
@@ -66,5 +67,15 @@ class DatabaseTest : KoinTest {
         for (tag in ALL_TAGS) {
             assertEquals(listOf(SINGLE_NOTE), localDataImp.getNotesForTag(tag.name))
         }
+    }
+
+    @Test
+    fun `deleteNotes actually deletes notes`() {
+        for (idx in 0L..4) {
+            localDataImp.createNote(TestUtil.makeNote(idx), listOf(TestUtil.makeTag(idx)))
+        }
+        localDataImp.deleteNotes(listOf(2,4))
+
+        assertEquals(listOf(TestUtil.makeNote(0L), TestUtil.makeNote(1L), TestUtil.makeNote(3L)), localDataImp.getAllNotes())
     }
 }

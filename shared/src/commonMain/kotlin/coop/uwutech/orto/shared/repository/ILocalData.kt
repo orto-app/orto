@@ -11,6 +11,8 @@ interface ILocalData {
 
     fun insertNote(note: Note)
 
+    fun deleteNotes(noteIds: List<Long>)
+
     fun createNote(note: Note, tags: Collection<Tag>)
 
     fun getAllNotesAsFlow(): Flow<List<Note>>

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface INoteRepository {
     fun createNote(note: Note, tags: Collection<Tag>)
+    fun deleteNotes(noteIds: List<Long>)
     val allNotes: Flow<List<Note>>
     fun getNotesForTag(tagName: String): Flow<List<Note>>
 }

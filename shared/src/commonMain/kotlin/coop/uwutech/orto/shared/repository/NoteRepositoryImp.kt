@@ -12,7 +12,7 @@ class NoteRepositoryImp :
     private val localData: ILocalData by inject()
 
     override fun createNote(note: Note, tags: Collection<Tag>) = localData.createNote(note, tags)
-
+    override fun deleteNotes(noteIds: List<Long>) = localData.deleteNotes(noteIds)
     override val allNotes: Flow<List<Note>> = localData.getAllNotesAsFlow()
 
     override fun getNotesForTag(tagName: String) = localData.getNotesForTagAsFlow(tagName)

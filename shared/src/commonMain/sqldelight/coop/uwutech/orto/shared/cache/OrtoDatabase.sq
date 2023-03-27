@@ -66,6 +66,9 @@ insertNote:
 INSERT INTO Note(id, title, url, image, content)
 VALUES(?, ?, ?, ?, ?);
 
+deleteNote:
+DELETE FROM Note WHERE id = ?;
+
 getAllNotes:
 SELECT * FROM Note;
 

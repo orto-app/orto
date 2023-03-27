@@ -41,6 +41,16 @@ internal class LocalDataImp(databaseDriver: SqlDriver) : KoinComponent, ILocalDa
         )
     }
 
+    override fun deleteNotes(noteIds: List<Long>) {
+        dbQuery.transaction {
+            noteIds.forEach {
+                dbQuery.deleteNote(
+                    id = it
+                )
+            }
+        }
+    }
+
     override fun createNote(note: Note, tags: Collection<Tag>) {
         dbQuery.transaction {
             insertNote(note)
