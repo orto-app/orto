@@ -50,6 +50,6 @@ fun NoteItem(
 @Composable
 fun PrevOnBoardingActionButton() {
     val onClick: () -> Unit = {}
-    val state = NoteItemState(Note(0, "title1", "url1", "img1", "content1"), listOf("tag1", "tag2"))
+    val state = NoteItemState(0L, "title1", "url1", "img1", "content1", listOf("tag1", "tag2"))
     NoteItem(state, onClick)
 }
