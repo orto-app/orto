@@ -131,7 +131,7 @@ kotlin {
         val iosTest by creating {
             dependencies {
                 with(Deps.SqlDelight) {
-                    implementation(sqlite)
+                    implementation(native)
                 }
             }
             dependsOn(commonTest)
