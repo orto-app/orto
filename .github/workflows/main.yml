@@ -25,8 +25,8 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
-      - name: Build & Test
+      - name: Shared
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: check
+          arguments: :shared:check
