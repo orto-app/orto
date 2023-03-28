@@ -10,7 +10,7 @@ env:
   JAVA_VERSION: '14'
 
 jobs:
-  build:
+  test:
     name: Test
     runs-on: macos-12
     steps:
