@@ -26,6 +26,7 @@ object Versions {
     const val coroutinesNative = "1.3.8"
     const val datetime = "0.4.0"
     const val ktor = "2.2.1"
+    const val mockative = "1.3.1"
     const val mockk = "1.12.1"
     const val mockkJvm = "1.13.2"
 
@@ -104,6 +105,11 @@ object Deps {
     object Mockk {
         const val common = "io.mockk:mockk-common:${Versions.mockk}"
         const val jvm = "io.mockk:mockk-jvm:${Versions.mockkJvm}"
+    }
+
+    object Mockative {
+        const val core = "io.mockative:mockative:${Versions.mockative}"
+        const val processor = "io.mockative:mockative-processor:${Versions.mockative}"
     }
 
     object Navigation {

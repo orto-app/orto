@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
+    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
     id("com.android.library")
     id("com.squareup.sqldelight")
 }
@@ -69,8 +70,8 @@ kotlin {
                 with (Deps.KotlinX.Coroutines) {
                     implementation(test)
                 }
-                with(Deps.Mockk) {
-                    implementation(common)
+                with(Deps.Mockative) {
+                    implementation(core)
                 }
                 with(Deps.Koin) {
                     implementation(test)
@@ -99,9 +100,6 @@ kotlin {
                 implementation("junit:junit:${jUnitVersion}")
                 //need to add
                 implementation("androidx.test:core:1.5.0")
-                with(Deps.Mockk) {
-                    implementation(jvm)
-                }
                 with(Deps.SqlDelight) {
                     implementation(sqlite)
                 }
@@ -142,10 +140,17 @@ kotlin {
     }
 }
 
+dependencies {
+    configurations
+        .filter { it.name.startsWith("ksp") && it.name.contains("Test") }
+        .forEach {
+            add(it.name, Deps.Mockative.processor)
+        }
+}
+
 android {
     namespace = "coop.uwutech.orto"
     compileSdk = Versions.compileSdk
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk

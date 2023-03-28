@@ -6,8 +6,7 @@ import coop.uwutech.orto.shared.domain.ITagRepository
 import coop.uwutech.orto.shared.domain.model.NoteItemState
 import coop.uwutech.orto.shared.domain.model.core.Resource
 import coop.uwutech.orto.shared.domain.model.noteItemStateFromNote
-import io.mockk.every
-import io.mockk.mockkClass
+import io.mockative.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
@@ -17,13 +16,15 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
-import org.koin.test.mock.MockProvider
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetNotesForTagUseCaseTest : KoinTest {
-    private val mockedNoteRepository = mockkClass(INoteRepository::class)
-    private val mockedTagRepository = mockkClass(ITagRepository::class)
+    @Mock
+    private val mockedNoteRepository = mock(classOf<INoteRepository>())
+
+    @Mock
+    private val mockedTagRepository = mock(classOf<ITagRepository>())
     private val getNotesForTagUseCase: GetNotesForTagUseCase by inject()
 
     private val homeNotes = listOf(TestUtil.makeNote(0), TestUtil.makeNote(1))
@@ -47,24 +48,21 @@ class GetNotesForTagUseCaseTest : KoinTest {
             })
         }
 
-        MockProvider.register {
-            mockkClass(it)
-        }
-
         // Define mocked behavior for repository
-        every { mockedNoteRepository.getNotesForTag(any()) } answers { invocation ->
-            val searchString = firstArg<String>()
-            when (searchString) {
-                "home" -> flowOf(homeNotes)
-                "trash" -> throw RuntimeException("error")
-                else -> flowOf(emptyList())
+        given(mockedNoteRepository).function(mockedNoteRepository::getNotesForTag)
+            .whenInvokedWith(any())
+            .then { searchString ->
+                when (searchString) {
+                    "home" -> flowOf(homeNotes)
+                    "trash" -> throw RuntimeException("error")
+                    else -> flowOf(emptyList())
+                }
             }
-        }
+        given(mockedTagRepository).function(mockedTagRepository::getTagsForNote)
+            .whenInvokedWith(any())
+            .then { noteId -> flowOf(tagsForNotes[noteId.toInt()]) }
 
-        every { mockedTagRepository.getTagsForNote(any()) } answers { invocation ->
-            val noteId = firstArg<Long>()
-            flowOf(tagsForNotes[noteId.toInt()])
-        }
+
     }
 
     @AfterTest
@@ -82,6 +80,7 @@ class GetNotesForTagUseCaseTest : KoinTest {
     @Test
     fun `test getNotesForTagUseCase returns success with non-empty list`() = runTest {
         val testString = "home"
+
         val result: List<Resource<List<NoteItemState>>> = getNotesForTagUseCase(testString).toList()
         assertEquals(1, result.size)
         assertTrue { result[0] is Resource.Success<List<NoteItemState>> }
