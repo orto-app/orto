@@ -46,7 +46,7 @@ jobs:
           xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Build Shared artifacts
-          id: gradle-test
+          id: gradle-build
           uses: gradle/gradle-build-action@v2
           with:
             arguments: :shared:build
