@@ -26,13 +26,13 @@ jobs:
           xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Build Shared
-        id: gradle
+        id: gradle-build
         uses: gradle/gradle-build-action@v2
         with:
           arguments: :shared:build
 
       - name: Test Shared
-        id: gradle
+        id: gradle-test
         uses: gradle/gradle-build-action@v2
         with:
           arguments: :shared:testDebugUnitTest
