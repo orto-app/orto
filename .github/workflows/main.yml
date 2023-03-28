@@ -29,4 +29,4 @@ jobs:
         id: gradle
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: :shared:check --warning-mode all
+          arguments: :shared:check
