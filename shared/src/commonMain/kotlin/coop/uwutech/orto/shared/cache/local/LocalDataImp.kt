@@ -69,6 +69,7 @@ internal class LocalDataImp(databaseDriver: SqlDriver) : KoinComponent, ILocalDa
     }
 
     private fun _getAllNotes() = dbQuery.getAllNotes()
+
     fun getAllNotes() = _getAllNotes().executeAsList()
 
     override fun getAllNotesAsFlow(): Flow<List<Note>> {
