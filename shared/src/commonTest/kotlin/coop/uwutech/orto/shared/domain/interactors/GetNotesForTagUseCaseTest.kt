@@ -27,14 +27,36 @@ class GetNotesForTagUseCaseTest : KoinTest {
     private val mockedTagRepository = mock(classOf<ITagRepository>())
     private val getNotesForTagUseCase: GetNotesForTagUseCase by inject()
 
-    private val homeNotes = listOf(TestUtil.makeNote(0), TestUtil.makeNote(1))
+    private val homeNotes = listOf(
+        TestUtil.makeNote(0),
+        TestUtil.makeNote(1),
+        TestUtil.makeNote(2),
+        TestUtil.makeNote(3),
+        TestUtil.makeNote(4),
+    )
+
+
+    // Given tag "home" frequencies are:
+    // 2: 3/15
+    // 3: 2/15
+    // 4: 1/15
+    // 5: 1/15
+    // 24: 1/15
     private val tagsForNotes = listOf(
-        listOf(TestUtil.makeTag(1), TestUtil.makeTag(1)),
-        listOf(TestUtil.makeTag(2))
+        listOf(TestUtil.makeTag(1, "home"), TestUtil.makeTag(2)),
+        listOf(TestUtil.makeTag(1, "home"), TestUtil.makeTag(3), TestUtil.makeTag(24)),
+        listOf(TestUtil.makeTag(1, "home"), TestUtil.makeTag(2), TestUtil.makeTag(4)),
+        listOf(TestUtil.makeTag(1, "home")),
+        listOf(
+            TestUtil.makeTag(1, "home"),
+            TestUtil.makeTag(2),
+            TestUtil.makeTag(3),
+            TestUtil.makeTag(5)
+        )
     )
     private val expectedNoteItemStateListResource: Resource.Success<List<NoteItemState>> =
         Resource.Success(data = homeNotes.mapIndexed { i, n ->
-            noteItemStateFromNote(n, tagsForNotes[i].map { it.name })
+            noteItemStateFromNote(n, tagsForNotes[i].filter { it.name != "home" }.map { it.name })
         })
 
     @BeforeTest

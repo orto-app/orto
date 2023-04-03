@@ -16,6 +16,10 @@ sealed class Resource<out T> {
         override fun hashCode(): Int {
             return data?.hashCode() ?: 0
         }
+
+        override fun toString(): String {
+            return "Success(data=$data)"
+        }
     }
 
     class Error(val exception: Exception) : Resource<Nothing>() {

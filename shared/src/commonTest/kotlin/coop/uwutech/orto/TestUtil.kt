@@ -24,6 +24,7 @@ class TestUtil {
         )
 
         fun makeNote(long: Long) = Note(long, "Note${long}", "url${long}", "img${long}", "content${long}")
-        fun makeTag(long: Long) = Tag(long, "Note${long}", null)
+        fun makeTag(long: Long) = makeTag(long, "Tag${long}")
+        fun makeTag(long: Long, name: String) = Tag(long, name, null)
     }
 }
