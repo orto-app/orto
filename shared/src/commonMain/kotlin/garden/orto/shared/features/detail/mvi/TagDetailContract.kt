@@ -20,6 +20,5 @@ interface TagDetailContract {
 
     sealed interface Effect : UiEffect {
         object NotesDeleted : Effect
-        object NotesDeletedError : Effect
     }
 }

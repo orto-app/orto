@@ -83,8 +83,6 @@ class GetNotesForTagUseCaseTest : KoinTest {
         given(mockedTagRepository).function(mockedTagRepository::getTagsForNote)
             .whenInvokedWith(any())
             .then { noteId -> flowOf(tagsForNotes[noteId.toInt()]) }
-
-
     }
 
     @AfterTest

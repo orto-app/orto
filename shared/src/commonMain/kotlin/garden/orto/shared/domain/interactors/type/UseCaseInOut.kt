@@ -23,7 +23,10 @@ abstract class UseCaseInOut<IN, OUT> {
 
 abstract class UseCaseInOutFlow<IN, OUT> {
     operator fun invoke(param: IN): Flow<Resource<OUT>> = try {
-        build(param).map { Resource.Success(data = it) }
+        val x = build(param)
+        x.map {
+            Resource.Success(data = it)
+        }
     } catch (ex: Exception) {
         flowOf(Resource.Error(exception = ex))
     }

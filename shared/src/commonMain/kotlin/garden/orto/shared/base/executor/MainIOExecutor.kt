@@ -13,10 +13,10 @@ import org.koin.core.component.inject
 
 abstract class MainIOExecutor : IExecutorScope, CoroutineScope, KoinComponent {
 
-    private val mainDispatcher: MainDispatcher by inject()
+    private val mainDispatcher: IDispatcher by inject()
     private val ioDispatcher: CoroutineDispatcher by inject()
 
-    private val  job: CompletableJob = SupervisorJob()
+    private val job: CompletableJob = SupervisorJob()
 
     override val coroutineContext: CoroutineContext
         get() = job + mainDispatcher.dispatcher

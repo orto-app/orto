@@ -30,11 +30,20 @@ open class TagDetailViewModel :
     private fun getNotes(tagName: String) {
         this.tagName = tagName
         setState { copy(notes = BasicUiState.Loading) }
-        collect(getNotesForTagUseCase(tagName)) { resource ->
+        val x = getNotesForTagUseCase(tagName)
+        collect(x) { resource ->
             when (resource) {
                 is Resource.Error -> setState { copy(notes = BasicUiState.Error()) }
                 is Resource.Success -> {
-                    setState { copy(notes = BasicUiState.Success(resource.data)) }
+                    setState {
+                        copy(
+                            notes =
+                            if (resource.data.isEmpty())
+                                BasicUiState.Empty
+                            else
+                                BasicUiState.Success(resource.data)
+                        )
+                    }
                     this.notes = resource.data
                 }
             }
@@ -44,7 +53,7 @@ open class TagDetailViewModel :
     private fun deleteNotes(noteIds: List<Long>) {
         collect(deleteNotesUseCase(noteIds)) { resource ->
             when (resource) {
-                is Resource.Error -> setEffect { TagDetailContract.Effect.NotesDeletedError }
+                is Resource.Error -> {}
                 is Resource.Success -> setEffect { TagDetailContract.Effect.NotesDeleted }
             }
         }

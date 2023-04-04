@@ -25,7 +25,7 @@ class GetNotesForTagUseCase(
                     .map { tags -> tags.filter { it.name != param } }
             }
 
-            // Combine all the List<Tag> flows into one Flow<List<List<Tag>>>
+            // Combine all the List<Tag> flows into one Flow<List<List<String>>>
             combine(tagFlowList) { tagListArray ->
                 val frequencies = tagListArray.toList()
                     .flatten()

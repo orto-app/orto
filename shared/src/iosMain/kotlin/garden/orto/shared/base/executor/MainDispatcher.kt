@@ -6,8 +6,8 @@ import platform.Foundation.NSRunLoop
 import platform.Foundation.performBlock
 import kotlin.coroutines.CoroutineContext
 
-actual class MainDispatcher {
-    actual val dispatcher: CoroutineDispatcher = MainLoopDispatcher
+actual class MainDispatcher : IDispatcher {
+    actual override val dispatcher: CoroutineDispatcher = MainLoopDispatcher
 }
 
 object MainLoopDispatcher : CoroutineDispatcher() {
