@@ -5,10 +5,10 @@ plugins {
 }
 
 android {
-    namespace = "coop.uwutech.orto.android"
+    namespace = "garden.orto.android"
     compileSdk = Versions.compileSdk
     defaultConfig {
-        applicationId = "coop.uwutech.orto.android"
+        applicationId = "garden.orto.android"
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
         versionCode = Orto.versionCode

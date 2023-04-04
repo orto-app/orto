@@ -149,7 +149,7 @@ dependencies {
 }
 
 android {
-    namespace = "coop.uwutech.orto"
+    namespace = "garden.orto"
     compileSdk = Versions.compileSdk
     defaultConfig {
         minSdk = Versions.minSdk
@@ -159,6 +159,6 @@ android {
 
 sqldelight {
     database("OrtoDatabase") {
-        packageName = "coop.uwutech.orto.shared.cache"
+        packageName = "garden.orto.shared.cache"
     }
 }
