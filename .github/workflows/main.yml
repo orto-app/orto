@@ -3,9 +3,7 @@ name: Build and Test
 on:
   workflow_dispatch:
   push:
-    branches:
-      - 'main'
-      - 'viewmodeltest'
+    branches: 'main'
 
 env:
   XCODE_VERSION: '13.4.1'
