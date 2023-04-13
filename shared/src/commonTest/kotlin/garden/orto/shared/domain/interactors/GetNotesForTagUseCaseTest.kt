@@ -91,30 +91,32 @@ class GetNotesForTagUseCaseTest : KoinTest {
     }
 
     @Test
-    fun `test getNotesForTagUseCase returns success with empty list`() = runTest {
-        val testString = "random"
-        val result: List<Resource<List<NoteItemState>>> = getNotesForTagUseCase(testString).toList()
-        assertEquals(emptyList(), result)
-    }
+    fun `test getNotesForTagUseCase returns success with empty list`() = validTestCase(
+        "random",
+        emptyList()
+    )
 
     @Test
-    fun `test getNotesForTagUseCase returns success with non-empty list`() = runTest {
-        val testString = "home"
-
-        val result: List<Resource<List<NoteItemState>>> = getNotesForTagUseCase(testString).toList()
-        assertEquals(1, result.size)
-        assertTrue { result[0] is Resource.Success<List<NoteItemState>> }
-        assertEquals(expectedNoteItemStateListResource, result[0])
-    }
+    fun `test getNotesForTagUseCase returns success with non-empty list`() = validTestCase(
+        "home",
+        listOf(expectedNoteItemStateListResource)
+    )
 
     @Test
-    fun `test getNotesForTagUseCase returns error`() = runTest {
-        val testString = "trash"
+    fun `test getNotesForTagUseCase returns error`() = invalidTestCase(
+        "trash",
+        listOf("error")
+    )
+
+    private fun validTestCase(testString: String, expected: List<Resource<List<NoteItemState>>>) = runTest {
         val result: List<Resource<List<NoteItemState>>> = getNotesForTagUseCase(testString).toList()
-        assertEquals(1, result.size)
+        assertEquals(expected.size, result.size)
+        assertEquals(expected, result)
+    }
 
-
-        val error = result[0] as Resource.Error
-        assertEquals("error", error.exception.message)
+    private fun invalidTestCase(testString: String, expected: List<String>) = runTest {
+        val result: List<Resource.Error> = getNotesForTagUseCase(testString).toList() as List<Resource.Error>
+        assertEquals(expected.size, result.size)
+        assertEquals(expected, result.map { it.exception.message })
     }
 }
