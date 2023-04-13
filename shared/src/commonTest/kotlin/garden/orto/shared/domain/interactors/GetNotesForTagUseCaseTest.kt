@@ -115,7 +115,8 @@ class GetNotesForTagUseCaseTest : KoinTest {
     }
 
     private fun invalidTestCase(testString: String, expected: List<String>) = runTest {
-        val result: List<Resource.Error> = getNotesForTagUseCase(testString).toList() as List<Resource.Error>
+        val result = getNotesForTagUseCase(testString).toList()
+        assertIs<List<Resource.Error>>(result)
         assertEquals(expected.size, result.size)
         assertEquals(expected, result.map { it.exception.message })
     }
