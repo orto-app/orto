@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - 'main'
-      - 'rename'
+      - 'viewmodeltest'
 
 env:
   XCODE_VERSION: '13.4.1'
