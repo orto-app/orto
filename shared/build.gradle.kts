@@ -36,8 +36,6 @@ kotlin {
         }
     }
 
-    val jUnitVersion = "4.13.2"
-
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -97,7 +95,6 @@ kotlin {
         val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:${jUnitVersion}")
                 //need to add
                 implementation("androidx.test:core:1.5.0")
                 with(Deps.SqlDelight) {
