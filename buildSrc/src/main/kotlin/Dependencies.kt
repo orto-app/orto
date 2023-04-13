@@ -4,13 +4,24 @@ object Orto {
 }
 
 object Versions {
+    // Kotlin
     const val gradle = "7.3.1"
     const val kotlin = "1.8.0"
-    const val koin = "3.3.3"
-    const val sqldelight = "1.5.5"
-
     const val kotlinCompilerExtensionVersion = "1.4.0"
 
+    // KotlinX
+    const val coroutines = "1.6.4"
+    const val datetime = "0.4.0"
+
+    // Kotlin Multiplatform
+    const val koin = "3.3.3"
+    const val sqldelight = "1.5.5"
+    const val ktor = "2.2.1"
+
+    // Kotlin Multiplatform Test
+    const val mockative = "1.3.1"
+
+    // Jetpack Compose
     const val composeFoundation = "1.3.1"
     const val composeUi = "1.3.3"
     const val composeMaterial = "1.3.1"
@@ -20,21 +31,11 @@ object Versions {
     const val viewmodelCompose = "2.6.0"
     const val navigation = "2.5.3"
 
-    const val material = "1.7.0"
-
-    const val coroutines = "1.6.4"
-    const val coroutinesNative = "1.3.8"
-    const val datetime = "0.4.0"
-    const val ktor = "2.2.1"
-    const val mockative = "1.3.1"
-    const val mockk = "1.12.1"
-    const val mockkJvm = "1.13.2"
-
+    // Android
+    const val androidApplication = "7.4.0"
     const val minSdk = 24
     const val compileSdk = 33
     const val targetSdk = 33
-
-    const val kotlinxSerializationCore = "1.4.1"
 }
 
 object Deps {
@@ -100,11 +101,6 @@ object Deps {
         const val logging = "io.ktor:ktor-client-logging:${Versions.ktor}"
         const val android = "io.ktor:ktor-client-android:${Versions.ktor}"
         const val darwin = "io.ktor:ktor-client-darwin:${Versions.ktor}"
-    }
-
-    object Mockk {
-        const val common = "io.mockk:mockk-common:${Versions.mockk}"
-        const val jvm = "io.mockk:mockk-jvm:${Versions.mockkJvm}"
     }
 
     object Mockative {
