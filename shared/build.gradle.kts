@@ -22,7 +22,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
+            baseName = Orto.artifactId
             // Make AppleSettings visible from Swift
             export(Deps.Settings.settings)
             transitiveExport = true
@@ -36,7 +36,7 @@ kotlin {
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
         framework {
-            baseName = "shared"
+            baseName = Orto.artifactId
         }
     }
 
@@ -58,6 +58,9 @@ kotlin {
                     implementation(serializationJson)
                     implementation(logging)
                 }
+                with(Deps.Napier) {
+                    implementation(napier)
+                }
                 with(Deps.OFM) {
                     implementation(ofm)
                 }
@@ -75,7 +78,8 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                with(Deps.KotlinX.Coroutines) {
+                implementation("app.cash.turbine:turbine:${Versions.turbine}")
+                with (Deps.KotlinX.Coroutines) {
                     implementation(test)
                 }
                 with(Deps.Mockative) {
@@ -159,7 +163,7 @@ dependencies {
 }
 
 android {
-    namespace = "garden.orto"
+    namespace = Orto.group
     compileSdk = Versions.compileSdk
     defaultConfig {
         minSdk = Versions.minSdk

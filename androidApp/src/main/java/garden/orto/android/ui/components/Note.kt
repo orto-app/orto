@@ -15,6 +15,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import garden.orto.android.OrtoTheme
 import garden.orto.shared.domain.model.NoteState
 
 @Composable
@@ -41,8 +42,10 @@ fun NoteItem(
 
 @Preview(showBackground = true, device = Devices.PIXEL)
 @Composable
-fun PrevOnBoardingActionButton() {
-    val onClick: () -> Unit = {}
-    val state = NoteState(0L, "# content\n\nWith also some #tags", listOf("tag1", "tag2"))
-    NoteItem(state, onClick)
+fun PrevNoteItem() {
+    OrtoTheme {
+        val onClick: () -> Unit = {}
+        val state = NoteState(0L, "# content\n\nWith also some #tags", listOf("tag1", "tag2"))
+        NoteItem(state, onClick)
+    }
 }

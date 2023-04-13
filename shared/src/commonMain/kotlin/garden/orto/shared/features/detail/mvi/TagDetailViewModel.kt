@@ -5,7 +5,6 @@ import garden.orto.shared.base.mvi.BasicUiState
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.model.NoteState
-import garden.orto.shared.domain.model.core.Resource
 import org.koin.core.component.inject
 
 open class TagDetailViewModel :
@@ -23,38 +22,43 @@ open class TagDetailViewModel :
         when (event) {
             is TagDetailContract.Event.OnGetNotes -> getNotes(event.tagName)
             is TagDetailContract.Event.DeleteNotes -> deleteNotes(event.noteIds)
+            is TagDetailContract.Event.OnNoteClick -> setEffect {
+                TagDetailContract.Effect.NavigateToDetailNote(event.idNote)
+            }
+            is TagDetailContract.Event.OnFABClick -> setEffect {
+                TagDetailContract.Effect.NavigateToCreateNote
+            }
             TagDetailContract.Event.Retry -> tagName?.let { getNotes(it) }
         }
     }
 
     private fun getNotes(tagName: String) {
         this.tagName = tagName
-        setState { copy(notes = BasicUiState.Loading) }
-        val x = getNotesForTagUseCase(tagName)
-        collect(x) { resource ->
-            when (resource) {
-                is Resource.Error -> setState { copy(notes = BasicUiState.Error()) }
-                is Resource.Success -> {
+        setState { copy(tagName = tagName, notes = BasicUiState.Loading) }
+        collect(getNotesForTagUseCase(tagName)) { result ->
+            result
+                .onSuccess {
                     setState {
                         copy(
                             notes =
-                            if (resource.data.isEmpty())
+                            if (it.isEmpty())
                                 BasicUiState.Empty
                             else
-                                BasicUiState.Success(resource.data)
+                                BasicUiState.Success(it)
                         )
                     }
-                    this.notes = resource.data
+                    this.notes = it
                 }
-            }
+                .onFailure {
+                    setState { copy(notes = BasicUiState.Error()) }
+                }
         }
     }
 
     private fun deleteNotes(noteIds: List<Long>) {
-        collect(deleteNotesUseCase(noteIds)) { resource ->
-            when (resource) {
-                is Resource.Error -> {}
-                is Resource.Success -> setEffect { TagDetailContract.Effect.NotesDeleted }
+        collect(deleteNotesUseCase(noteIds)) { result ->
+            result.onSuccess {
+                setEffect { TagDetailContract.Effect.NotesDeleted }
             }
         }
     }

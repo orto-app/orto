@@ -140,9 +140,12 @@ class DatabaseTest : KoinTest {
         for (idx in 1L..5) {
             localDataImp.createNote(TestUtil.makeBlock(idx), listOf(TestUtil.makeTag(idx).name))
         }
-        localDataImp.deleteBlocks(listOf(2,4))
+        localDataImp.deleteBlocks(listOf(2, 4))
 
-        assertEqualsBlocks(listOf(TestUtil.makeBlock(1L), TestUtil.makeBlock(3L), TestUtil.makeBlock(5L)), localDataImp.getAllBlocks())
+        assertEqualsBlocks(
+            listOf(TestUtil.makeBlock(1L), TestUtil.makeBlock(3L), TestUtil.makeBlock(5L)),
+            localDataImp.getAllBlocks()
+        )
     }
 
     @Test
@@ -150,7 +153,7 @@ class DatabaseTest : KoinTest {
         for (idx in 1L..5) {
             localDataImp.createNote(TestUtil.makeBlock(idx), listOf(TestUtil.makeTag(idx).name))
         }
-        localDataImp.deleteBlocks(listOf(2,4))
+        localDataImp.deleteBlocks(listOf(2, 4))
 
         assertEqualsTags(listOf(), localDataImp.getTagsForBlock(2))
         assertEqualsTags(listOf(), localDataImp.getTagsForBlock(4))

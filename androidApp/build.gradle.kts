@@ -57,6 +57,7 @@ dependencies {
         implementation(material3Window)
         implementation(material)
         implementation(foundation)
+        implementation(lifecycle)
         implementation(ui)
         implementation(uiToolingPreview)
         implementation(activity)

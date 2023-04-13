@@ -1,4 +1,4 @@
-package garden.orto.android.ui.features
+package garden.orto.android.ui.features.detail.tag
 
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -9,6 +9,6 @@ fun ActionBar(
     name: String
 ) {
     TopAppBar(
-        title = { Text(text = name) }
+        title = { Text(text = "#$name") }
     )
 }

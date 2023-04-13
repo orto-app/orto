@@ -1,6 +1,16 @@
 object Orto {
+    const val group = "garden.orto.shared"
+    const val artifactId = "core"
+    private const val baseVersion = "0.1.0"
+    const val snapshot = true
+    val versionName = if (snapshot) {
+        baseVersion.substringBefore("-").split('.').let { (major, minor, patch) ->
+            "$major.$minor.${patch.toInt() + 1}-SNAPSHOT"
+        }
+    } else {
+        baseVersion
+    }
     const val versionCode = 1
-    const val versionName = "1.0.0"
 }
 
 object Versions {
@@ -19,18 +29,17 @@ object Versions {
 
     // Kotlin Multiplatform
     const val koin = "3.3.3"
+    const val napier = "2.6.1"
     const val sqldelight = "1.5.5"
     const val ktor = "2.2.1"
     const val settings = "1.0.0"
 
     // Kotlin Multiplatform Test
     const val mockative = "1.4.1"
+    const val turbine = "0.12.3"
 
     // OFM
     const val ofm = "0.1.2"
-
-    // OFM
-    const val ofm = "0.1.1-SNAPSHOT"
 
     // Jetpack Compose
     const val composeFoundation = "1.3.1"
@@ -39,7 +48,8 @@ object Versions {
     const val composeMaterial3 = "1.0.1"
     const val coil = "1.4.0"
     const val activityCompose = "1.6.1"
-    const val viewmodelCompose = "2.6.0"
+    const val lifecycle = "2.6.1"
+    const val viewModelCompose = "2.6.0"
     const val navigation = "2.5.3"
 
     // Android
@@ -73,6 +83,8 @@ object Deps {
         const val foundation =
             "androidx.compose.foundation:foundation:${Versions.composeFoundation}"
 
+        const val lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.lifecycle}"
+
         // or only import the main APIs for the underlying toolkit systems,
         // such as input and measurement/layout
         const val ui = "androidx.compose.ui:ui:${Versions.composeUi}"
@@ -85,7 +97,7 @@ object Deps {
 
         // Optional - Integration with ViewModels
         const val viewmodel =
-            "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.viewmodelCompose}"
+            "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.viewModelCompose}"
         const val coil = "io.coil-kt:coil-compose:${Versions.coil}"
     }
 
@@ -97,6 +109,7 @@ object Deps {
 
     object KotlinX {
         const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:${Versions.datetime}"
+
         object Coroutines {
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}-native-mt"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
@@ -116,6 +129,10 @@ object Deps {
     object Mockative {
         const val core = "io.mockative:mockative:${Versions.mockative}"
         const val processor = "io.mockative:mockative-processor:${Versions.mockative}"
+    }
+
+    object Napier {
+        const val napier = "io.github.aakira:napier:${Versions.napier}"
     }
 
     object Navigation {

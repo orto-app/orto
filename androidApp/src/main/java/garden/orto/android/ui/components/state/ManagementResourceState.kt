@@ -13,9 +13,9 @@ fun <T> ManagementResourceState(
     successView: @Composable (data: T?) -> Unit,
     modifier: Modifier = Modifier,
     onTryAgain: () -> Unit,
-    msgTryAgain: String = "No data to show",
+    msgTryAgain: String = "An error has ocurred",
     onCheckAgain: () -> Unit,
-    msgCheckAgain: String = "An error has ocurred"
+    msgCheckAgain: String = "No data to show"
 ) {
     Box(
         contentAlignment = Alignment.Center,

@@ -3,7 +3,6 @@ package garden.orto.shared.domain.interactors
 import garden.orto.TestUtil
 import garden.orto.shared.cache.Block
 import garden.orto.shared.domain.IBlockRepository
-import garden.orto.shared.domain.model.core.Resource
 import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import io.mockative.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,14 +59,10 @@ class CreateNotesUseCaseTest : KoinTest {
                 blocks = pairs.map { pair -> Pair(pair.first, pair.second.toList()) }
             }
 
-        val result: List<Resource<Unit>> = createNotesUseCase(content.map {
-            TestUtil.makeNoteState(it)
-        }).toList()
+        val result: List<Result<Unit>> = createNotesUseCase(content).toList()
 
         // Returns something
         assertNotNull(blocks)
-        // Returns successfully for all notes
-        assertIs<List<Resource.Success<Unit>>>(result)
 
         // A block is created for each note
         assertEquals(content.size, result.size)

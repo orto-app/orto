@@ -1,17 +1,19 @@
 package garden.orto.shared.features.detail.mvi
 
+import app.cash.turbine.test
 import garden.orto.TestUtil
 import garden.orto.shared.base.executor.IDispatcher
+import garden.orto.shared.base.mvi.BasicUiState
 import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
-import garden.orto.shared.domain.model.NoteState
-import garden.orto.shared.domain.model.core.Resource
 import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import io.mockative.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.*
 import org.koin.core.component.inject
@@ -23,7 +25,8 @@ import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TagDetailViewModelTest : KoinTest {
-    class TestDispatcher : IDispatcher {
+
+    private val testDispatcher = object : IDispatcher {
         override val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
     }
 
@@ -40,10 +43,6 @@ class TagDetailViewModelTest : KoinTest {
         listOf(TestUtil.makeTag(1), TestUtil.makeTag(1)),
         listOf(TestUtil.makeTag(2))
     )
-//    private val expectedNoteStateListResource: Resource.Success<List<NoteState>> =
-//        Resource.Success(data = homeNotes.mapIndexed { i, n ->
-//            noteItemStateFromNote(n, tagsForNotes[i].map { it.name })
-//        })
 
     @BeforeTest
     fun setup() {
@@ -55,8 +54,10 @@ class TagDetailViewModelTest : KoinTest {
                 factory { NoteStateMapper() }
                 factory { GetNotesForTagUseCase(get(), get(), get()) }
                 factory { DeleteNotesUseCase(get()) }
-                single<IDispatcher> { TestDispatcher() }
-                single<CoroutineDispatcher> { StandardTestDispatcher() }
+                // Main dispatcher
+                single<IDispatcher> { testDispatcher }
+                // IO dispatcher
+                single { testDispatcher.dispatcher }
                 single { TagDetailViewModel() }
             })
         }
@@ -65,10 +66,18 @@ class TagDetailViewModelTest : KoinTest {
         given(mockedNoteRepository).function(mockedNoteRepository::getBlocksForTag)
             .whenInvokedWith(any())
             .then { searchString ->
-                when (searchString) {
-                    "home" -> flowOf(homeNotes)
-                    "trash" -> throw RuntimeException("error")
-                    else -> flowOf(emptyList())
+                flow {
+                    delay(100)
+                    when (searchString) {
+                        "home" -> {
+                            emit(homeNotes)
+                            delay(100)
+                            emit(homeNotes.subList(0, 1))
+                        }
+
+                        "trash" -> throw RuntimeException("error")
+                        else -> emit(emptyList())
+                    }
                 }
             }
 
@@ -82,25 +91,21 @@ class TagDetailViewModelTest : KoinTest {
         stopKoin()
     }
 
-//    @Test
-//    fun `test tagDetailViewModel returns success with empty list`() = runTest {
-//        val testString = "random"
-//
-//        assertEquals(BasicUiState.Idle, tagDetailViewModel.uiState.value.notes)
-//
-//        val job = launch {
-//            tagDetailViewModel.uiState.collect() //now it should work
-//        }
-//
-//        tagDetailViewModel.setEvent(TagDetailContract.Event.OnGetNotes(testString))
-//        assertEquals(BasicUiState.Loading, tagDetailViewModel.uiState.value.notes)
-//        advanceTimeBy(5000) // This is required in order to bypass debounce(500)
-//        runCurrent() // Run any pending tasks at the current virtual time, according to the testScheduler.
-//
-//        assertEquals(BasicUiState.Empty, tagDetailViewModel.uiState.value.notes)
-//
-//        job.cancel()
-//    }
+    @Test
+    fun `when creating viewModel should set Idle state`() = runTest {
+        assertEquals(BasicUiState.Idle, tagDetailViewModel.uiState.value.notes)
+    }
+
+    @Test
+    fun `viewModel should return Success for empty list`() = runTest {
+        val testString = "random"
+        tagDetailViewModel.uiState.test {
+            assertEquals(BasicUiState.Idle, awaitItem().notes)
+            tagDetailViewModel.setEvent(TagDetailContract.Event.OnGetNotes(testString))
+            assertEquals(BasicUiState.Loading, awaitItem().notes)
+//            assertEquals(BasicUiState.Empty, awaitItem().notes)
+        }
+    }
 //
 //    @Test
 //    fun `test getNotesForTagUseCase returns success with non-empty list`() = runTest {

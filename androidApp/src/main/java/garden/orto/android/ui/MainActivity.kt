@@ -10,24 +10,30 @@ import garden.orto.android.base.BaseActivity
 import garden.orto.android.ui.navigation.Navigation
 import garden.orto.shared.base.executor.IExecutorScope
 import garden.orto.shared.domain.ISettingsRepository
+import garden.orto.shared.features.create.mvi.NoteShareSheetViewModel
+import garden.orto.shared.features.detail.mvi.TagDetailContract
 import garden.orto.shared.features.detail.mvi.TagDetailViewModel
 import org.koin.android.ext.android.inject
 
 @OptIn(ExperimentalCoilApi::class)
 class MainActivity : BaseActivity() {
-    private val settingsRepository : ISettingsRepository by inject()
+    private val settingsRepository: ISettingsRepository by inject()
     private val vmTagDetail: TagDetailViewModel by inject()
+    private val vmNoteShareSheet: NoteShareSheetViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = "Orto"
+        val uiHomeTagName = settingsRepository.getByKey<String>("ui.home").get()
+        vmTagDetail.setEvent(TagDetailContract.Event.OnGetNotes(uiHomeTagName))
+
         // Start a coroutine in the lifecycle scope
         setContent {
             OrtoTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     Navigation(
                         vmTagDetail = vmTagDetail,
-                        uiHomeTagName = settingsRepository.getByKey<String>("ui.home").get()
+                        vmNoteShareSheet = vmNoteShareSheet,
+                        uiHomeTagName = uiHomeTagName
                     )
                 }
             }
@@ -35,5 +41,8 @@ class MainActivity : BaseActivity() {
     }
 
     override val vm: Array<IExecutorScope>
-        get() = arrayOf(vmTagDetail)
+        get() = arrayOf(
+            vmTagDetail,
+            vmNoteShareSheet
+        )
 }

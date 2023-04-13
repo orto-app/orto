@@ -10,7 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class GetNotesForTagUseCase(
+open class GetNotesForTagUseCase(
     private val blockRepository: IBlockRepository,
     private val tagRepository: ITagRepository,
     private val mapper: NoteStateMapper
@@ -25,30 +25,34 @@ class GetNotesForTagUseCase(
                     .map { tags -> tags.filter { it.name != param } }
             }
 
-            // Combine all the List<Tag> flows into one Flow<List<List<String>>>
-            combine(tagFlowList) { tagListArray ->
-                val frequencies = tagListArray.toList()
-                    .flatten()
-                    .groupingBy { it.id }
-                    .eachCount()
-                tagListArray.map { tags ->
-                    // Sort tags by relative frequency to the input tag
-                    tags.sortedWith { a, b ->
-                        val aFrequency = frequencies[a.id]!!
-                        val bFrequency = frequencies[b.id]!!
-                        if (aFrequency > bFrequency) {
-                            -1
-                        } else if (aFrequency < bFrequency) {
-                            1
-                        } else {
-                            0
-                        }
-                    }.map { tag -> tag.name }
+            if (tagFlowList.isNotEmpty()) {
+                // Combine all the List<Tag> flows into one Flow<List<List<String>>>
+                combine(tagFlowList) { tagListArray ->
+                    val frequencies = tagListArray.toList()
+                        .flatten()
+                        .groupingBy { it.id }
+                        .eachCount()
+                    tagListArray.map { tags ->
+                        // Sort tags by relative frequency to the input tag
+                        tags.sortedWith { a, b ->
+                            val aFrequency = frequencies[a.id]!!
+                            val bFrequency = frequencies[b.id]!!
+                            if (aFrequency > bFrequency) {
+                                -1
+                            } else if (aFrequency < bFrequency) {
+                                1
+                            } else {
+                                0
+                            }
+                        }.map { tag -> tag.name }
+                    }
                 }
+            } else {
+                flowOf(emptyList())
             }
         }
-        return tags.zip(blocks) { t, n ->
-            n.mapIndexed { index, block ->
+        return blocks.zip(tags) { b, t ->
+            b.mapIndexed { index, block ->
                 mapper.inverseMap(block = block, tags = t[index])
             }
         }

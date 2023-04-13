@@ -40,4 +40,6 @@ sealed class NavItem(
             )
         )
     }
+
+    object NoteCreateNavItem : NavItem("noteCreate")
 }

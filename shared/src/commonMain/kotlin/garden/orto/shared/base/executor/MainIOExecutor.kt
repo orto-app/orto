@@ -6,6 +6,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -32,6 +33,18 @@ abstract class MainIOExecutor : IExecutorScope, CoroutineScope, KoinComponent {
             flow
                 .flowOn(ioDispatcher)
                 .collect {
+                    collect(it)
+                }
+        }
+    }
+
+    protected fun <T> collectLatest(
+        flow: Flow<T>, collect: (T) -> Unit
+    ) {
+        launch {
+            flow
+                .flowOn(ioDispatcher)
+                .collectLatest {
                     collect(it)
                 }
         }

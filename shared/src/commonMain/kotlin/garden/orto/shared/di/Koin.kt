@@ -8,10 +8,13 @@ import garden.orto.shared.domain.ITagRepository
 import garden.orto.shared.domain.interactors.CreateNotesUseCase
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
+import garden.orto.shared.domain.interactors.ParseNoteContentUseCase
 import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import garden.orto.shared.repository.ILocalData
 import garden.orto.shared.repository.BlockRepositoryImp
 import garden.orto.shared.repository.TagRepositoryImp
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
@@ -26,11 +29,14 @@ import org.koin.dsl.module
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
+        Napier.base(DebugAntilog())
         modules(
             repositoryModule,
+            // IO and other dispatchers
             dispatcherModule,
             useCasesModule,
             mapperModule,
+            // Main dispatcher and platform specific modules
             platformModule
         )
     }
@@ -67,6 +73,7 @@ val useCasesModule: Module = module {
     factory { GetNotesForTagUseCase(get(), get(), get()) }
     factory { DeleteNotesUseCase(get()) }
     factory { CreateNotesUseCase(get(), get()) }
+    factory { ParseNoteContentUseCase(get()) }
 }
 
 val dispatcherModule = module {

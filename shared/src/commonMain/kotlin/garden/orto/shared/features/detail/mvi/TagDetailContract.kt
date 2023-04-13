@@ -10,6 +10,9 @@ interface TagDetailContract {
     sealed interface Event : UiEvent {
         data class OnGetNotes(val tagName: String) : Event
         data class DeleteNotes(val noteIds: List<Long>) : Event
+        data class OnNoteClick(val idNote: Long) : Event
+        object OnFABClick : Event
+
         object Retry : Event
     }
 
@@ -19,6 +22,8 @@ interface TagDetailContract {
     ) : UiState
 
     sealed interface Effect : UiEffect {
+        object NavigateToCreateNote : Effect
+        data class NavigateToDetailNote(val idNote: Long) : Effect
         object NotesDeleted : Effect
     }
 }
