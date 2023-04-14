@@ -1,26 +1,26 @@
 package garden.orto.shared.domain.interactors
 
-import garden.orto.shared.cache.Note
-import garden.orto.shared.cache.Tag
-import garden.orto.shared.domain.INoteRepository
+import garden.orto.shared.cache.Block
+import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
 import garden.orto.shared.domain.interactors.type.UseCaseInOutFlow
-import garden.orto.shared.domain.model.NoteItemState
-import garden.orto.shared.domain.model.noteItemStateFromNote
+import garden.orto.shared.domain.model.NoteState
+import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetNotesForTagUseCase(
-    private val noteRepository: INoteRepository,
-    private val tagRepository: ITagRepository
-) : UseCaseInOutFlow<String, List<NoteItemState>>() {
-    override fun build(param: String): Flow<List<NoteItemState>> {
-        val notes: Flow<List<Note>> = noteRepository.getNotesForTag(param)
-        val tags: Flow<List<List<String>>> = notes.flatMapLatest { noteList ->
+    private val blockRepository: IBlockRepository,
+    private val tagRepository: ITagRepository,
+    private val mapper: NoteStateMapper
+) : UseCaseInOutFlow<String, List<NoteState>>() {
+    override fun build(param: String): Flow<List<NoteState>> {
+        val blocks: Flow<List<Block>> = blockRepository.getBlocksForTag(param)
+        val tags: Flow<List<List<String>>> = blocks.flatMapLatest { blockList ->
             // Create a Flow of List<Tag> for each Note
-            val tagFlowList = noteList.map { note ->
-                tagRepository.getTagsForNote(note.id)
+            val tagFlowList = blockList.map { block ->
+                tagRepository.getTagsForBlock(block.id)
                     // Exclude the current tag
                     .map { tags -> tags.filter { it.name != param } }
             }
@@ -47,9 +47,9 @@ class GetNotesForTagUseCase(
                 }
             }
         }
-        return tags.zip(notes) { t, n ->
-            n.mapIndexed { index, note ->
-                noteItemStateFromNote(note = note, tags = t[index])
+        return tags.zip(blocks) { t, n ->
+            n.mapIndexed { index, block ->
+                mapper.inverseMap(block = block, tags = t[index])
             }
         }
     }

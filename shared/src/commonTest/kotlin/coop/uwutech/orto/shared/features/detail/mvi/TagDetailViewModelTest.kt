@@ -2,20 +2,17 @@ package garden.orto.shared.features.detail.mvi
 
 import garden.orto.TestUtil
 import garden.orto.shared.base.executor.IDispatcher
-import garden.orto.shared.base.mvi.BasicUiState
-import garden.orto.shared.domain.INoteRepository
+import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 import garden.orto.shared.domain.model.core.Resource
-import garden.orto.shared.domain.model.noteItemStateFromNote
+import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import io.mockative.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import org.koin.core.component.inject
 import org.koin.core.context.startKoin
@@ -32,21 +29,21 @@ class TagDetailViewModelTest : KoinTest {
 
     // FIXME: We don't mock the usecases (instead they're injected in startKoin) because Mockative can only mock interfaces
     @Mock
-    private val mockedNoteRepository = mock(classOf<INoteRepository>())
+    private val mockedNoteRepository = mock(classOf<IBlockRepository>())
 
     @Mock
     private val mockedTagRepository = mock(classOf<ITagRepository>())
     private val tagDetailViewModel: TagDetailViewModel by inject()
 
-    private val homeNotes = listOf(TestUtil.makeNote(0), TestUtil.makeNote(1))
+    private val homeNotes = listOf(TestUtil.makeBlock(0), TestUtil.makeBlock(1))
     private val tagsForNotes = listOf(
         listOf(TestUtil.makeTag(1), TestUtil.makeTag(1)),
         listOf(TestUtil.makeTag(2))
     )
-    private val expectedNoteItemStateListResource: Resource.Success<List<NoteItemState>> =
-        Resource.Success(data = homeNotes.mapIndexed { i, n ->
-            noteItemStateFromNote(n, tagsForNotes[i].map { it.name })
-        })
+//    private val expectedNoteStateListResource: Resource.Success<List<NoteState>> =
+//        Resource.Success(data = homeNotes.mapIndexed { i, n ->
+//            noteItemStateFromNote(n, tagsForNotes[i].map { it.name })
+//        })
 
     @BeforeTest
     fun setup() {
@@ -55,7 +52,8 @@ class TagDetailViewModelTest : KoinTest {
             modules(module {
                 single { mockedNoteRepository }
                 single { mockedTagRepository }
-                factory { GetNotesForTagUseCase(get(), get()) }
+                factory { NoteStateMapper() }
+                factory { GetNotesForTagUseCase(get(), get(), get()) }
                 factory { DeleteNotesUseCase(get()) }
                 single<IDispatcher> { TestDispatcher() }
                 single<CoroutineDispatcher> { StandardTestDispatcher() }
@@ -64,7 +62,7 @@ class TagDetailViewModelTest : KoinTest {
         }
 
         // Define mocked behavior for repository
-        given(mockedNoteRepository).function(mockedNoteRepository::getNotesForTag)
+        given(mockedNoteRepository).function(mockedNoteRepository::getBlocksForTag)
             .whenInvokedWith(any())
             .then { searchString ->
                 when (searchString) {
@@ -74,7 +72,7 @@ class TagDetailViewModelTest : KoinTest {
                 }
             }
 
-        given(mockedTagRepository).function(mockedTagRepository::getTagsForNote)
+        given(mockedTagRepository).function(mockedTagRepository::getTagsForBlock)
             .whenInvokedWith(any())
             .then { noteId -> flowOf(tagsForNotes[noteId.toInt()]) }
     }

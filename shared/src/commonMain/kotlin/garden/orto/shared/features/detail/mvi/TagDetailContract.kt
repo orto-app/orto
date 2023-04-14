@@ -4,7 +4,7 @@ import garden.orto.shared.base.mvi.BasicUiState
 import garden.orto.shared.base.mvi.UiEffect
 import garden.orto.shared.base.mvi.UiEvent
 import garden.orto.shared.base.mvi.UiState
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 
 interface TagDetailContract {
     sealed interface Event : UiEvent {
@@ -15,7 +15,7 @@ interface TagDetailContract {
 
     data class State(
         val tagName: String,
-        val notes: BasicUiState<List<NoteItemState>>
+        val notes: BasicUiState<List<NoteState>>
     ) : UiState
 
     sealed interface Effect : UiEffect {

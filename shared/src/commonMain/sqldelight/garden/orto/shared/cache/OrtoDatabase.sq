@@ -26,68 +26,76 @@ CREATE TABLE Tag (
     id   INTEGER NOT NULL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     parent_id  INTEGER DEFAULT NULL,
+    created_at INTEGER AS kotlinx.datetime.LocalDateTime NOT NULL DEFAULT (CAST(STRFTIME('%s','now') AS INTEGER)),
+    updated_at INTEGER AS kotlinx.datetime.LocalDateTime NOT NULL DEFAULT (CAST(STRFTIME('%s','now') AS INTEGER)),
     FOREIGN KEY (parent_id) REFERENCES Tag(id)
 );
 
-CREATE TABLE Note (
+CREATE TABLE Block (
     id   INTEGER NOT NULL PRIMARY KEY,
-    title TEXT NOT NULL,
-    url TEXT,
-    image TEXT,
-    content TEXT
+    content TEXT NOT NULL,
+    created_at INTEGER AS kotlinx.datetime.LocalDateTime NOT NULL DEFAULT (CAST(STRFTIME('%s','now') AS INTEGER)),
+    updated_at INTEGER AS kotlinx.datetime.LocalDateTime NOT NULL DEFAULT (CAST(STRFTIME('%s','now') AS INTEGER))
 );
 -- https://kotlinlang.org/docs/multiplatform-mobile-ktor-sqldelight.html#generate-the-database-api
-CREATE TABLE Notes_Tags(
-    note_id INTEGER NOT NULL,
+CREATE TABLE Blocks_Tags(
+    block_id INTEGER NOT NULL,
     tag_id INTEGER NOT NULL,
-    PRIMARY KEY (note_id, tag_id),
-    FOREIGN KEY (note_id) REFERENCES Note(id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES Tag(id) ON DELETE CASCADE
+    PRIMARY KEY (block_id, tag_id),
+    FOREIGN KEY (block_id) REFERENCES Block(id),
+    FOREIGN KEY (tag_id) REFERENCES Tag(id)
 );
 
 removeAllRelations:
-DELETE FROM Notes_Tags;
+DELETE FROM Blocks_Tags;
 
 removeAllTags:
 DELETE FROM Tag;
 
-removeAllNotes:
-DELETE FROM Note;
+removeAllBlocks:
+DELETE FROM Block;
 
-insertNoteTagRelation:
-INSERT INTO Notes_Tags(note_id, tag_id)
+insertBlockTagRelation:
+INSERT INTO Blocks_Tags(block_id, tag_id)
 VALUES(?, ?);
 
 insertTag:
-INSERT INTO Tag(id, name, parent_id)
-VALUES(?, ?, ?);
+INSERT INTO Tag(name, parent_id)
+VALUES( :name, :parent_id);
 
-insertNote:
-INSERT INTO Note(id, title, url, image, content)
-VALUES(?, ?, ?, ?, ?);
+insertBlock:
+INSERT INTO Block(content)
+VALUES (?);
 
-deleteNote:
-DELETE FROM Note WHERE id = ?;
+deleteBlock:
+DELETE FROM Block WHERE id = ?;
 
-getAllNotes:
-SELECT * FROM Note;
+deleteBlockRelations:
+DELETE FROM Blocks_Tags WHERE block_id = ?;
+
+getAllBlocks:
+SELECT * FROM Block;
 
 getAllTags:
 SELECT * FROM Tag
-ORDER BY name ASC;
+ORDER BY updated_at ASC;
+
+getTagIdByName:
+SELECT id FROM Tag
+WHERE name = ?;
 
 getTagByName:
 SELECT * FROM Tag
 WHERE name = ?;
 
-getTagsForNote:
-SELECT DISTINCT Tag.id, Tag.name, Tag.parent_id
+getTagsForBlock:
+SELECT DISTINCT Tag.id, Tag.name, Tag.parent_id, Tag.created_at, Tag.updated_at
 FROM Tag
-JOIN Notes_Tags ON Tag.id = tag_id
-JOIN Note ON Notes_Tags.note_id = ?;
+JOIN Blocks_Tags ON Tag.id = tag_id
+JOIN Block ON Blocks_Tags.block_id = ?;
 
-getNotesForTag:
-SELECT DISTINCT Note.id, Note.title, Note.url, Note.image, Note.content
-FROM Note
-JOIN Notes_Tags ON Note.id = note_id
-JOIN Tag ON Notes_Tags.tag_id = (SELECT id FROM Tag WHERE name = ?);
+getBlocksForTag:
+SELECT DISTINCT Block.id, Block.content, Block.created_at, Block.updated_at
+FROM Block
+JOIN Blocks_Tags ON Block.id = block_id
+JOIN Tag ON Blocks_Tags.tag_id = (SELECT id FROM Tag WHERE name = ?);

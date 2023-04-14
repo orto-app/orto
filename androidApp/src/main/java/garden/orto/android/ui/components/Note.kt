@@ -15,12 +15,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import garden.orto.shared.cache.Note
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 
 @Composable
 fun NoteItem(
-    state: NoteItemState, onClick: () -> Unit
+    state: NoteState, onClick: () -> Unit
 ) {
     Card(
         elevation = 10.dp
@@ -50,6 +49,6 @@ fun NoteItem(
 @Composable
 fun PrevOnBoardingActionButton() {
     val onClick: () -> Unit = {}
-    val state = NoteItemState(0L, "title1", "url1", "img1", "content1", listOf("tag1", "tag2"))
+    val state = NoteState(0L, "title1", "url1", "img1", "content1", listOf("tag1", "tag2"))
     NoteItem(state, onClick)
 }

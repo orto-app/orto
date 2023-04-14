@@ -1,11 +1,11 @@
 package garden.orto.shared.domain.interactors
 
 import garden.orto.TestUtil
-import garden.orto.shared.domain.INoteRepository
+import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 import garden.orto.shared.domain.model.core.Resource
-import garden.orto.shared.domain.model.noteItemStateFromNote
+import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import io.mockative.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -21,18 +21,18 @@ import kotlin.test.*
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetNotesForTagUseCaseTest : KoinTest {
     @Mock
-    private val mockedNoteRepository = mock(classOf<INoteRepository>())
+    private val mockedNoteRepository = mock(classOf<IBlockRepository>())
 
     @Mock
     private val mockedTagRepository = mock(classOf<ITagRepository>())
     private val getNotesForTagUseCase: GetNotesForTagUseCase by inject()
 
     private val homeNotes = listOf(
-        TestUtil.makeNote(0),
-        TestUtil.makeNote(1),
-        TestUtil.makeNote(2),
-        TestUtil.makeNote(3),
-        TestUtil.makeNote(4),
+        TestUtil.makeBlock(0),
+        TestUtil.makeBlock(1),
+        TestUtil.makeBlock(2),
+        TestUtil.makeBlock(3),
+        TestUtil.makeBlock(4),
     )
 
 
@@ -54,9 +54,10 @@ class GetNotesForTagUseCaseTest : KoinTest {
             TestUtil.makeTag(5)
         )
     )
-    private val expectedNoteItemStateListResource: Resource.Success<List<NoteItemState>> =
+    private val expectedNoteStateListResource: Resource.Success<List<NoteState>> =
         Resource.Success(data = homeNotes.mapIndexed { i, n ->
-            noteItemStateFromNote(n, tagsForNotes[i].filter { it.name != "home" }.map { it.name })
+            val mapper = NoteStateMapper()
+            mapper.inverseMap(n, tagsForNotes[i].filter { it.name != "home" }.map { it.name })
         })
 
     @BeforeTest
@@ -66,12 +67,13 @@ class GetNotesForTagUseCaseTest : KoinTest {
             modules(module {
                 single { mockedNoteRepository }
                 single { mockedTagRepository }
-                factory { GetNotesForTagUseCase(get(), get()) }
+                factory { NoteStateMapper() }
+                factory { GetNotesForTagUseCase(get(), get(), get()) }
             })
         }
 
         // Define mocked behavior for repository
-        given(mockedNoteRepository).function(mockedNoteRepository::getNotesForTag)
+        given(mockedNoteRepository).function(mockedNoteRepository::getBlocksForTag)
             .whenInvokedWith(any())
             .then { searchString ->
                 when (searchString) {
@@ -80,7 +82,7 @@ class GetNotesForTagUseCaseTest : KoinTest {
                     else -> flowOf(emptyList())
                 }
             }
-        given(mockedTagRepository).function(mockedTagRepository::getTagsForNote)
+        given(mockedTagRepository).function(mockedTagRepository::getTagsForBlock)
             .whenInvokedWith(any())
             .then { noteId -> flowOf(tagsForNotes[noteId.toInt()]) }
     }
@@ -99,7 +101,7 @@ class GetNotesForTagUseCaseTest : KoinTest {
     @Test
     fun `test getNotesForTagUseCase returns success with non-empty list`() = validTestCase(
         "home",
-        listOf(expectedNoteItemStateListResource)
+        listOf(expectedNoteStateListResource)
     )
 
     @Test
@@ -108,8 +110,8 @@ class GetNotesForTagUseCaseTest : KoinTest {
         listOf("error")
     )
 
-    private fun validTestCase(testString: String, expected: List<Resource<List<NoteItemState>>>) = runTest {
-        val result: List<Resource<List<NoteItemState>>> = getNotesForTagUseCase(testString).toList()
+    private fun validTestCase(testString: String, expected: List<Resource<List<NoteState>>>) = runTest {
+        val result: List<Resource<List<NoteState>>> = getNotesForTagUseCase(testString).toList()
         assertEquals(expected.size, result.size)
         assertEquals(expected, result)
     }

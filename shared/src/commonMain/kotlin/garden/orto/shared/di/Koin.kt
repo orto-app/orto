@@ -1,13 +1,15 @@
 package garden.orto.shared.di
 
 import garden.orto.shared.cache.local.LocalDataImp
+import garden.orto.shared.cache.local.adapters.localDateTimeAdapter
 import garden.orto.shared.di.PlatformModule.platformModule
-import garden.orto.shared.domain.INoteRepository
+import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
+import garden.orto.shared.domain.model.mapper.NoteStateMapper
 import garden.orto.shared.repository.ILocalData
-import garden.orto.shared.repository.NoteRepositoryImp
+import garden.orto.shared.repository.BlockRepositoryImp
 import garden.orto.shared.repository.TagRepositoryImp
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -27,6 +29,7 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
             repositoryModule,
             dispatcherModule,
             useCasesModule,
+            mapperModule,
             platformModule
         )
     }
@@ -35,8 +38,9 @@ fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
 fun initKoin() = initKoin {}
 
 val repositoryModule = module {
+    single { localDateTimeAdapter }
     single<ILocalData> { LocalDataImp(get()) }
-    single<INoteRepository> { NoteRepositoryImp() }
+    single<IBlockRepository> { BlockRepositoryImp() }
     single<ITagRepository> { TagRepositoryImp() }
 
     single {
@@ -59,10 +63,14 @@ val repositoryModule = module {
 }
 
 val useCasesModule: Module = module {
-    factory { GetNotesForTagUseCase(get(), get()) }
+    factory { GetNotesForTagUseCase(get(), get(), get()) }
     factory { DeleteNotesUseCase(get()) }
 }
 
 val dispatcherModule = module {
     factory { Dispatchers.Default }
+}
+
+val mapperModule = module {
+    factory { NoteStateMapper() }
 }

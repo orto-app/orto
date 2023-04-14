@@ -4,110 +4,128 @@ import com.squareup.sqldelight.Query
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
-import garden.orto.shared.cache.Note
+import garden.orto.shared.cache.Block
 import garden.orto.shared.cache.OrtoDatabase
 import garden.orto.shared.cache.Tag
+import garden.orto.shared.cache.local.adapters.localDateTimeAdapter
 import garden.orto.shared.repository.ILocalData
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 
-internal class LocalDataImp(databaseDriver: SqlDriver) : KoinComponent, ILocalData {
-    private val database = OrtoDatabase(databaseDriver)
+internal class LocalDataImp(
+    databaseDriver: SqlDriver
+) : KoinComponent, ILocalData {
+    private val database = OrtoDatabase(
+        driver = databaseDriver,
+        BlockAdapter = Block.Adapter(
+            created_atAdapter = localDateTimeAdapter,
+            updated_atAdapter = localDateTimeAdapter
+        ),
+        TagAdapter = Tag.Adapter(
+            created_atAdapter = localDateTimeAdapter,
+            updated_atAdapter = localDateTimeAdapter
+        )
+    )
     private val dbQuery = database.ortoDatabaseQueries
+
+    /**
+     * General
+     */
 
     override fun clearDatabase() {
         dbQuery.transaction {
             dbQuery.removeAllRelations()
             dbQuery.removeAllTags()
-            dbQuery.removeAllNotes()
+            dbQuery.removeAllBlocks()
         }
     }
 
-    override fun insertTag(tag: Tag) {
-        dbQuery.insertTag(
-            id = tag.id,
-            name = tag.name,
-            parent_id = tag.parent_id
-        )
-    }
+    /**
+     * Tags
+     */
 
-    override fun insertNote(note: Note) {
-        dbQuery.insertNote(
-            id = note.id,
-            title = note.title,
-            url = note.url,
-            image = note.image,
-            content = note.content
-        )
-    }
-
-    override fun deleteNotes(noteIds: List<Long>) {
-        dbQuery.transaction {
-            noteIds.forEach {
-                dbQuery.deleteNote(
-                    id = it
-                )
-            }
+    private fun getOrCreateTag(name: String, parent_id: Long?): Tag {
+        val tag = dbQuery.getTagByName(name).executeAsOneOrNull()
+        if (tag == null) {
+            dbQuery.insertTag(name = name, parent_id = parent_id)
         }
+        return dbQuery.getTagByName(name).executeAsOne()
     }
 
-    override fun createNote(note: Note, tags: Collection<Tag>) {
-        dbQuery.transaction {
-            insertNote(note)
-            tags.forEach {
-                val tag = dbQuery.getTagByName(it.name).executeAsOneOrNull()
-                if (tag == null) {
-                    insertTag(it)
-                }
-                val inserted = dbQuery.getTagByName(it.name).executeAsOne()
-                dbQuery.insertNoteTagRelation(
-                    note.id,
-                    inserted.id
-                )
-            }
+    override fun createTagChain(name: String): Tag = dbQuery.transactionWithResult {
+        var parentName = ""
+        name.split("/").forEach { partialName ->
+            parentName = getOrCreateTag(
+                listOf(parentName, partialName).filter { it.isNotBlank() }.joinToString("/"),
+                dbQuery.getTagIdByName(parentName).executeAsOneOrNull()
+            ).name
         }
-    }
-
-    private fun _getAllNotes() = dbQuery.getAllNotes()
-
-    fun getAllNotes() = _getAllNotes().executeAsList()
-
-    override fun getAllNotesAsFlow(): Flow<List<Note>> {
-        return _getAllNotes()
-            .asFlow()
-            .mapToList()
-    }
-
-    private fun _getNotesForTag(name: String): Query<Note> {
-        return dbQuery.getNotesForTag(name = name)
-    }
-
-    fun getNotesForTag(name: String): List<Note> {
-        return _getNotesForTag(name = name).executeAsList()
-    }
-
-    override fun getNotesForTagAsFlow(tagName: String): Flow<List<Note>> {
-        return _getNotesForTag(tagName)
-            .asFlow()
-            .mapToList()
+        return@transactionWithResult dbQuery.getTagByName(name).executeAsOne()
     }
 
     private fun _getAllTags() = dbQuery.getAllTags()
-
     fun getAllTags(): List<Tag> = _getAllTags().executeAsList()
-
-    override fun getAllTagsAsFlow(): Flow<List<Tag>> {
-        return _getAllTags()
+    override fun getAllTagsAsFlow(): Flow<List<Tag>> =
+        _getAllTags()
             .asFlow()
             .mapToList()
+
+    private fun _getTagsForBlock(blockId: Long) = dbQuery.getTagsForBlock(block_id = blockId)
+    fun getTagsForBlock(blockId: Long): List<Tag> = _getTagsForBlock(blockId).executeAsList()
+    override fun getTagsForBlockAsFlow(blockId: Long): Flow<List<Tag>> =
+        _getTagsForBlock(blockId)
+            .asFlow()
+            .mapToList()
+
+    /**
+     * Blocks
+     */
+
+    private fun insertBlock(block: Block) {
+        dbQuery.insertBlock(
+            content = block.content
+        )
     }
 
-    private fun _getTagsForNote(id: Long) = dbQuery.getTagsForNote(note_id = id)
-    fun getTagsForNote(id: Long): List<Tag> = _getTagsForNote(id).executeAsList()
+    override fun deleteBlocks(blockIds: List<Long>) {
+        dbQuery.transaction {
+            blockIds.forEach {
+                dbQuery.deleteBlock(
+                    id = it
+                )
+                dbQuery.deleteBlockRelations(block_id = it)
+            }
+        }
+    }
 
-    override fun getTagsForNoteAsFlow(id: Long): Flow<List<Tag>> {
-        return _getTagsForNote(id)
+    private fun _getAllBlocks() = dbQuery.getAllBlocks()
+    fun getAllBlocks() = _getAllBlocks().executeAsList()
+    override fun getAllBlocksAsFlow(): Flow<List<Block>> =
+        _getAllBlocks()
             .asFlow()
             .mapToList()
+
+    private fun _getBlocksForTag(name: String): Query<Block> = dbQuery.getBlocksForTag(name = name)
+    fun getBlocksForTag(name: String): List<Block> = _getBlocksForTag(name = name).executeAsList()
+    override fun getBlocksForTagAsFlow(tagName: String): Flow<List<Block>> =
+        _getBlocksForTag(tagName)
+            .asFlow()
+            .mapToList()
+
+    /**
+     * Blocks
+     */
+
+    override fun createNote(block: Block, tags: Collection<String>) {
+        dbQuery.transaction {
+            insertBlock(block)
+            tags.forEach {
+                val tag = createTagChain(it)
+                dbQuery.insertBlockTagRelation(
+                    block.id,
+                    tag.id
+                )
+            }
+        }
     }
 }

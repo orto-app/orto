@@ -4,7 +4,7 @@ import garden.orto.shared.base.mvi.BaseViewModel
 import garden.orto.shared.base.mvi.BasicUiState
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 import garden.orto.shared.domain.model.core.Resource
 import org.koin.core.component.inject
 
@@ -14,7 +14,7 @@ open class TagDetailViewModel :
     private val deleteNotesUseCase: DeleteNotesUseCase by inject()
 
     private var tagName: String? = null
-    private lateinit var notes: List<NoteItemState>
+    private lateinit var notes: List<NoteState>
 
     override fun createInitialState(): TagDetailContract.State =
         TagDetailContract.State(tagName = "", notes = BasicUiState.Idle)

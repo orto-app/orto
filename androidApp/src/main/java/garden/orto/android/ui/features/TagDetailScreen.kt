@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import coil.annotation.ExperimentalCoilApi
 import garden.orto.android.ui.components.NoteItem
 import garden.orto.android.ui.components.state.ManagementResourceState
-import garden.orto.shared.domain.model.NoteItemState
+import garden.orto.shared.domain.model.NoteState
 import garden.orto.shared.features.detail.mvi.TagDetailContract
 import garden.orto.shared.features.detail.mvi.TagDetailViewModel
 
@@ -49,7 +49,7 @@ fun TagDetailScreen(
 @ExperimentalCoilApi
 @Composable
 fun NotesList(
-    notes: List<NoteItemState>,
+    notes: List<NoteState>,
     onNoteClick: (Long) -> Unit
 ) {
     LazyColumn(

@@ -1,4 +1,4 @@
-package garden.orto.shared.domain.model.map
+package garden.orto.shared.base.map
 
 abstract class Mapper<M, P> {
     abstract fun map(model: M): P
