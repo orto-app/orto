@@ -3,7 +3,9 @@ name: Build and Test
 on:
   workflow_dispatch:
   push:
-    branches: 'main'
+    branches:
+    - 'main'
+    - 'bigchange'
 
 env:
   XCODE_VERSION: '13.4.1'
