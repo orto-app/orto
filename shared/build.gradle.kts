@@ -2,16 +2,17 @@ plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
-    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
+    id("com.google.devtools.ksp") version Versions.ksp
     id("com.android.library")
     id("com.squareup.sqldelight")
 }
 
 kotlin {
+    jvmToolchain(8)
     android {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = Versions.jdk
             }
         }
     }
@@ -41,6 +42,7 @@ kotlin {
             dependencies {
                 with(Deps.KotlinX) {
                     implementation(datetime)
+                    implementation(markdown)
                 }
                 with(Deps.KotlinX.Coroutines) {
                     implementation(core)
@@ -65,7 +67,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                with (Deps.KotlinX.Coroutines) {
+                with(Deps.KotlinX.Coroutines) {
                     implementation(test)
                 }
                 with(Deps.Mockative) {
@@ -157,5 +159,130 @@ android {
 sqldelight {
     database("OrtoDatabase") {
         packageName = "garden.orto.shared.cache"
+    }
+}
+
+
+// Will be fixed in Kotlin 1.9
+// See https://youtrack.jetbrains.com/issue/KT-55751
+val myAttribute = Attribute.of("myOwnAttribute", String::class.java)
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("podDebugFrameworkIosFat").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "pod-debug-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("debugFrameworkIosFat").configure {
+    attributes {
+        attribute(myAttribute, "debug-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("podDebugFrameworkIosSimulatorArm64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "simulator-pod-debug-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("debugFrameworkIosSimulatorArm64").configure {
+    attributes {
+        attribute(myAttribute, "simulator-debug-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("podDebugFrameworkIosX64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "x64-pod-debug-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("debugFrameworkIosX64").configure {
+    attributes {
+        attribute(myAttribute, "x64-debug-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("releaseFrameworkIosArm64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "arm64-release-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("podReleaseFrameworkIosArm64").configure {
+    attributes {
+        attribute(myAttribute, "arm64-pod-release-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("releaseFrameworkIosFat").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "ios-release-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("podReleaseFrameworkIosFat").configure {
+    attributes {
+        attribute(myAttribute, "ios-pod-release-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("releaseFrameworkIosSimulatorArm64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "simulator-release-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("podReleaseFrameworkIosSimulatorArm64").configure {
+    attributes {
+        attribute(myAttribute, "simulator-pod-release-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("releaseFrameworkIosX64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "x64-release-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("podReleaseFrameworkIosX64").configure {
+    attributes {
+        attribute(myAttribute, "x64-pod-release-all")
+    }
+}
+
+// replace releaseFrameworkIosFat by the name of the first configuration that conflicts
+configurations.named("podDebugFrameworkIosArm64").configure {
+    attributes {
+        // put a unique attribute
+        attribute(myAttribute, "arm64-pod-debug-all")
+    }
+}
+
+// replace debugFrameworkIosFat by the name of the second configuration that conflicts
+configurations.named("debugFrameworkIosArm64").configure {
+    attributes {
+        attribute(myAttribute, "arm64-debug-all")
     }
 }

@@ -4,14 +4,19 @@ object Orto {
 }
 
 object Versions {
+    // Gradle plugins
+    const val android = "7.4.2"
+    const val kotlin = "1.8.20"
+    const val ksp = "1.8.20-1.0.10"
+
     // Kotlin
-    const val gradle = "7.3.1"
-    const val kotlin = "1.8.0"
+    const val jdk = "1.8"
     const val kotlinCompilerExtensionVersion = "1.4.0"
 
     // KotlinX
     const val coroutines = "1.6.4"
     const val datetime = "0.4.0"
+    const val markdown = "0.4.1"
 
     // Kotlin Multiplatform
     const val koin = "3.3.3"
@@ -32,7 +37,6 @@ object Versions {
     const val navigation = "2.5.3"
 
     // Android
-    const val androidApplication = "7.4.0"
     const val minSdk = 24
     const val compileSdk = 33
     const val targetSdk = 33
@@ -46,7 +50,7 @@ object Deps {
             "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlin}"
         const val navigation =
             "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigation}"
-        const val gradle = "com.android.tools.build:gradle:${Versions.gradle}"
+        const val gradle = "com.android.tools.build:gradle:${Versions.android}"
         const val sqldelight = "com.squareup.sqldelight:gradle-plugin:${Versions.sqldelight}"
     }
 
@@ -87,6 +91,7 @@ object Deps {
 
     object KotlinX {
         const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:${Versions.datetime}"
+        const val markdown = "org.jetbrains:markdown:${Versions.markdown}"
         object Coroutines {
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}-native-mt"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
