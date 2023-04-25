@@ -16,7 +16,6 @@ object Versions {
     // KotlinX
     const val coroutines = "1.6.4"
     const val datetime = "0.4.0"
-    const val markdown = "0.4.1"
 
     // Kotlin Multiplatform
     const val koin = "3.3.3"
@@ -29,6 +28,9 @@ object Versions {
 
     // OFM
     const val ofm = "0.1.2"
+
+    // OFM
+    const val ofm = "0.1.1-SNAPSHOT"
 
     // Jetpack Compose
     const val composeFoundation = "1.3.1"
@@ -95,7 +97,6 @@ object Deps {
 
     object KotlinX {
         const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:${Versions.datetime}"
-        const val markdown = "org.jetbrains:markdown:${Versions.markdown}"
         object Coroutines {
             const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}-native-mt"
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"

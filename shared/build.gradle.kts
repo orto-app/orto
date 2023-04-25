@@ -48,7 +48,6 @@ kotlin {
                 }
                 with(Deps.KotlinX) {
                     implementation(datetime)
-                    implementation(markdown)
                 }
                 with(Deps.KotlinX.Coroutines) {
                     implementation(core)
