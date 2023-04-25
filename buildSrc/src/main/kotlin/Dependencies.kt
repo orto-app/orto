@@ -26,6 +26,9 @@ object Versions {
     // Kotlin Multiplatform Test
     const val mockative = "1.3.1"
 
+    // OFM
+    const val ofm = "0.1.1-SNAPSHOT"
+
     // Jetpack Compose
     const val composeFoundation = "1.3.1"
     const val composeUi = "1.3.3"
@@ -127,6 +130,10 @@ object Deps {
 
         // Jetpack Compose Integration
         const val compose = "androidx.navigation:navigation-compose:${Versions.navigation}"
+    }
+
+    object OFM {
+        const val ofm = "garden.orto:ofm:${Versions.ofm}"
     }
 
     object SqlDelight {
