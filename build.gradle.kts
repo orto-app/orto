@@ -17,6 +17,6 @@ buildscript {
         classpath(Deps.Gradle.kotlinSerialization)
         classpath(Deps.Gradle.navigation)
         classpath(Deps.Gradle.sqldelight)
-        classpath(Deps.Gradle.gradle)
+        classpath(Deps.Gradle.android)
     }
 }

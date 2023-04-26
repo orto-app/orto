@@ -53,6 +53,9 @@ kotlin {
                     implementation(serializationJson)
                     implementation(logging)
                 }
+                with(Deps.OFM) {
+                    implementation(ofm)
+                }
                 with(Deps.SqlDelight) {
                     implementation(runtime)
                     implementation(coroutines)

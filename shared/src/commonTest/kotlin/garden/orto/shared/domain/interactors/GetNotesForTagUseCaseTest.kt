@@ -112,6 +112,7 @@ class GetNotesForTagUseCaseTest : KoinTest {
 
     private fun validTestCase(testString: String, expected: List<Resource<List<NoteState>>>) = runTest {
         val result: List<Resource<List<NoteState>>> = getNotesForTagUseCase(testString).toList()
+        assertIs<List<Resource.Success<List<NoteState>>>>(result)
         assertEquals(expected.size, result.size)
         assertEquals(expected, result)
     }

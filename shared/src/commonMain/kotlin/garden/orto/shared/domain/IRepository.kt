@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IBlockRepository {
     fun createNote(block: Block, tags: Collection<String>)
+    fun createNotes(blocks: Iterable<Pair<Block, Iterable<String>>>)
     fun deleteBlocks(blockIds: List<Long>)
     fun getAllBlocks(): Flow<List<Block>>
     fun getBlocksForTag(tagName: String): Flow<List<Block>>
