@@ -2,6 +2,7 @@ package garden.orto
 
 import garden.orto.shared.cache.Block
 import garden.orto.shared.cache.Tag
+import garden.orto.shared.domain.model.NoteState
 import kotlinx.datetime.LocalDateTime
 import kotlin.test.assertEquals
 
@@ -27,6 +28,7 @@ class TestUtil {
         fun makeBlock(long: Long) = Block(long, "content${long}", makeNow(), makeNow())
         fun makeTag(long: Long) = makeTag(long, "Tag${long}")
         fun makeTag(long: Long, name: String) = Tag(long, name, null, makeNow(), makeNow())
+        fun makeNoteState(content: String) = NoteState(id = 0, content = content, tags = listOf())
         
         fun assertEqualsTag(expected: Tag, actual: Tag) {
             assertEquals(expected.id, actual.id)

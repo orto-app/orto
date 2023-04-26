@@ -116,7 +116,7 @@ internal class LocalDataImp(
      * Blocks
      */
 
-    override fun createNote(block: Block, tags: Collection<String>) {
+    override fun createNote(block: Block, tags: Iterable<String>) {
         dbQuery.transaction {
             insertBlock(block)
             tags.forEach {
@@ -125,6 +125,14 @@ internal class LocalDataImp(
                     block.id,
                     tag.id
                 )
+            }
+        }
+    }
+
+    override fun createNotes(blocks: Iterable<Pair<Block, Iterable<String>>>) {
+        dbQuery.transaction {
+            blocks.forEach {
+                createNote(it.first, it.second)
             }
         }
     }

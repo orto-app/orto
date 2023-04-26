@@ -5,6 +5,7 @@ import garden.orto.shared.cache.local.adapters.localDateTimeAdapter
 import garden.orto.shared.di.PlatformModule.platformModule
 import garden.orto.shared.domain.IBlockRepository
 import garden.orto.shared.domain.ITagRepository
+import garden.orto.shared.domain.interactors.CreateNotesUseCase
 import garden.orto.shared.domain.interactors.DeleteNotesUseCase
 import garden.orto.shared.domain.interactors.GetNotesForTagUseCase
 import garden.orto.shared.domain.model.mapper.NoteStateMapper
@@ -65,6 +66,7 @@ val repositoryModule = module {
 val useCasesModule: Module = module {
     factory { GetNotesForTagUseCase(get(), get(), get()) }
     factory { DeleteNotesUseCase(get()) }
+    factory { CreateNotesUseCase(get(), get()) }
 }
 
 val dispatcherModule = module {

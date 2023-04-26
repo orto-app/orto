@@ -24,7 +24,7 @@ object Versions {
     const val ktor = "2.2.1"
 
     // Kotlin Multiplatform Test
-    const val mockative = "1.3.1"
+    const val mockative = "1.4.1"
 
     // OFM
     const val ofm = "0.1.1-SNAPSHOT"
@@ -53,7 +53,7 @@ object Deps {
             "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlin}"
         const val navigation =
             "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigation}"
-        const val gradle = "com.android.tools.build:gradle:${Versions.android}"
+        const val android = "com.android.tools.build:gradle:${Versions.android}"
         const val sqldelight = "com.squareup.sqldelight:gradle-plugin:${Versions.sqldelight}"
     }
 

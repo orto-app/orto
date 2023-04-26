@@ -19,5 +19,7 @@ interface ILocalData {
 
     fun getBlocksForTagAsFlow(tagName: String): Flow<List<Block>>
 
-    fun createNote(block: Block, tags: Collection<String>)
+    fun createNote(block: Block, tags: Iterable<String>)
+
+    fun createNotes(blocks: Iterable<Pair<Block, Iterable<String>>>)
 }

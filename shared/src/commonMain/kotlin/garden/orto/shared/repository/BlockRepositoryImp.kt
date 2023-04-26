@@ -10,6 +10,7 @@ class BlockRepositoryImp :
     KoinComponent, IBlockRepository {
     private val localData: ILocalData by inject()
     override fun createNote(block: Block, tags: Collection<String>) = localData.createNote(block, tags)
+    override fun createNotes(blocks: Iterable<Pair<Block, Iterable<String>>>) = localData.createNotes(blocks)
     override fun deleteBlocks(blockIds: List<Long>) = localData.deleteBlocks(blockIds)
     override fun getAllBlocks(): Flow<List<Block>> = localData.getAllBlocksAsFlow()
     override fun getBlocksForTag(tagName: String) = localData.getBlocksForTagAsFlow(tagName)
