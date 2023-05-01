@@ -10,8 +10,8 @@ object Versions {
     const val ksp = "1.8.20-1.0.10"
 
     // Kotlin
-    const val jdk = "1.8"
-    const val kotlinCompilerExtensionVersion = "1.4.0"
+    const val jdk = "11"
+    const val kotlinCompilerExtensionVersion = "1.4.6"
 
     // KotlinX
     const val coroutines = "1.6.4"
@@ -22,12 +22,13 @@ object Versions {
     const val koin = "3.3.3"
     const val sqldelight = "1.5.5"
     const val ktor = "2.2.1"
+    const val settings = "1.0.0"
 
     // Kotlin Multiplatform Test
     const val mockative = "1.4.1"
 
     // OFM
-    const val ofm = "0.1.1-SNAPSHOT"
+    const val ofm = "0.1.2"
 
     // Jetpack Compose
     const val composeFoundation = "1.3.1"
@@ -134,6 +135,12 @@ object Deps {
 
     object OFM {
         const val ofm = "garden.orto:ofm:${Versions.ofm}"
+    }
+
+    object Settings {
+        const val coroutines = "com.russhwolf:multiplatform-settings-coroutines:${Versions.settings}"
+        const val settings = "com.russhwolf:multiplatform-settings:${Versions.settings}"
+        const val test = "com.russhwolf:multiplatform-settings-test:${Versions.settings}"
     }
 
     object SqlDelight {

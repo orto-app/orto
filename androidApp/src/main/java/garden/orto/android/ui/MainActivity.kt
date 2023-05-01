@@ -9,11 +9,13 @@ import garden.orto.android.OrtoTheme
 import garden.orto.android.base.BaseActivity
 import garden.orto.android.ui.navigation.Navigation
 import garden.orto.shared.base.executor.IExecutorScope
+import garden.orto.shared.domain.ISettingsRepository
 import garden.orto.shared.features.detail.mvi.TagDetailViewModel
 import org.koin.android.ext.android.inject
 
 @OptIn(ExperimentalCoilApi::class)
 class MainActivity : BaseActivity() {
+    private val settingsRepository : ISettingsRepository by inject()
     private val vmTagDetail: TagDetailViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,8 @@ class MainActivity : BaseActivity() {
             OrtoTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     Navigation(
-                        vmTagDetail = vmTagDetail
+                        vmTagDetail = vmTagDetail,
+                        uiHomeTagName = settingsRepository.getByKey<String>("ui.home").get()
                     )
                 }
             }

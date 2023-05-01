@@ -1,6 +1,7 @@
 package garden.orto.android
 
 import android.app.Application
+import garden.orto.android.di.settingsModule
 import garden.orto.android.di.viewModelModule
 import garden.orto.shared.di.initKoin
 import org.koin.android.BuildConfig
@@ -16,7 +17,8 @@ class OrtoApplication: Application() {
             androidLogger(if (BuildConfig.DEBUG) Level.ERROR else Level.NONE)
             androidContext(this@OrtoApplication)
             modules(
-                viewModelModule
+                viewModelModule,
+                settingsModule
             )
         }
     }

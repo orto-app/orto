@@ -8,7 +8,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(11)
     android {
         compilations.all {
             kotlinOptions {
@@ -23,6 +23,9 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            // Make AppleSettings visible from Swift
+            export(Deps.Settings.settings)
+            transitiveExport = true
         }
     }
 
@@ -40,6 +43,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                with(Deps.Koin) {
+                    implementation(core)
+                }
                 with(Deps.KotlinX) {
                     implementation(datetime)
                     implementation(markdown)
@@ -56,12 +62,12 @@ kotlin {
                 with(Deps.OFM) {
                     implementation(ofm)
                 }
+                with(Deps.Settings) {
+                    implementation(settings)
+                }
                 with(Deps.SqlDelight) {
                     implementation(runtime)
                     implementation(coroutines)
-                }
-                with(Deps.Koin) {
-                    implementation(core)
                 }
             }
         }
@@ -77,6 +83,9 @@ kotlin {
                     implementation(core)
                 }
                 with(Deps.Koin) {
+                    implementation(test)
+                }
+                with(Deps.Settings) {
                     implementation(test)
                 }
             }
@@ -156,6 +165,10 @@ android {
     defaultConfig {
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 

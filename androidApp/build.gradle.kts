@@ -24,16 +24,17 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/versions/9/previous-compilation-data.bin"
+            excludes += setOf("META-INF/*.kotlin_module")
         }
     }
     buildTypes {
-        getByName("release") {
+        val release by getting {
             isMinifyEnabled = false
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = Versions.jdk
@@ -69,17 +70,22 @@ dependencies {
     //debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+//    implementation("androidx.appcompat:appcompat:1.6.1")
     with (Deps.KotlinX.Coroutines) {
         implementation(android)
     }
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+//    implementation("androidx.core:core-ktx:1.10.0")
+//    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
     with(Deps.Koin) {
         implementation(android)
     }
     implementation("io.insert-koin:koin-androidx-compose:3.4.2")
+
+    with(Deps.Settings) {
+        implementation(settings)
+    }
+    implementation("androidx.preference:preference-ktx:1.2.0")
 }
 repositories {
     google()

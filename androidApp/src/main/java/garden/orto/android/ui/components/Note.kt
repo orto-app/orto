@@ -19,7 +19,8 @@ import garden.orto.shared.domain.model.NoteState
 
 @Composable
 fun NoteItem(
-    state: NoteState, onClick: () -> Unit
+    state: NoteState,
+    onClick: () -> Unit
 ) {
     Card(
         elevation = 10.dp
@@ -27,14 +28,7 @@ fun NoteItem(
         Column(
             modifier = Modifier.padding(15.dp)
         ) {
-            Text(buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(fontWeight = FontWeight.W900, color = Color(0xFF4552B8))
-                ) {
-                    append(state.title)
-                }
-            })
-            state.content?.let { Text(it) }
+            Text(state.content)
             //Image()
             Row {
                 for (tag in state.tags) {
@@ -49,6 +43,6 @@ fun NoteItem(
 @Composable
 fun PrevOnBoardingActionButton() {
     val onClick: () -> Unit = {}
-    val state = NoteState(0L, "title1", "url1", "img1", "content1", listOf("tag1", "tag2"))
+    val state = NoteState(0L, "# content\n\nWith also some #tags", listOf("tag1", "tag2"))
     NoteItem(state, onClick)
 }

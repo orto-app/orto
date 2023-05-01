@@ -1,5 +1,6 @@
 package garden.orto.shared.domain
 
+import garden.orto.shared.base.settings.SettingConfig
 import garden.orto.shared.cache.Block
 import garden.orto.shared.cache.Tag
 import kotlinx.coroutines.flow.Flow
@@ -16,4 +17,10 @@ interface ITagRepository {
     fun createTagChain(name: String): Tag
     val allTags: Flow<List<Tag>>
     fun getTagsForBlock(id: Long): Flow<List<Tag>>
+}
+
+interface ISettingsRepository {
+    val settingConfigs: Set<SettingConfig<*>>
+    fun <T> getByKey(key: String): SettingConfig<T>
+    fun clear()
 }

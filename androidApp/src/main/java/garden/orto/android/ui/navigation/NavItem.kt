@@ -1,33 +1,43 @@
 package garden.orto.android.ui.navigation
 
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
 sealed class NavItem(
-    internal val baseRoute: String,
-    private val navArgs: List<NavArg> = emptyList()
+    private val baseRoute: String,
+    private val navArgs: List<NavArg<*>> = emptyList()
 ) {
+    private fun formatQueryString(formatStrings: Collection<String>): String {
+        require(navArgs.size == formatStrings.size)
+        return "?" + navArgs.zip(formatStrings).joinToString("&") { "${it.first.key}=${it.second}" }
+    }
+    private fun formatArgKeys() = formatQueryString(navArgs.map { "{${it.key}}" })
+    protected fun formatNavRoute(args: Map<String, String>) =
+        baseRoute + formatQueryString(
+            navArgs.map { args[it.key]!! }
+        )
+
     val route = run {
-        val argKeys = navArgs.map { "{${it.key}}" }
-        listOf(baseRoute)
-            .plus(argKeys)
-            .joinToString("/")
+        baseRoute + formatArgKeys()
     }
 
     val args = navArgs.map {
-        navArgument(it.key) { type = it.navType }
+        navArgument(it.key) {
+            type = it.navType
+            defaultValue = it.defaultValue
+            nullable = it.defaultValue == null
+        }
     }
 
-    object TagDetail : NavItem(
+    open class TagDetailNavItem(defaultTagName: String) : NavItem(
         "tagDetail",
         listOf(
-            NavArg.NameTag
+            NavArg.TagName(defaultTagName)
         )
     ) {
-        fun createNavRoute(tagName: String) = "$baseRoute/$tagName"
+        fun createNavRoute(tagName: String) = formatNavRoute(
+            mapOf(
+                args[0].name to tagName
+            )
+        )
     }
-}
-
-enum class NavArg(val key: String, val navType: NavType<*>) {
-    NameTag("nameTag", NavType.StringType)
 }

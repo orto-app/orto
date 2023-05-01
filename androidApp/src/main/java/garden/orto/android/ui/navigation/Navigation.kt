@@ -8,22 +8,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import garden.orto.android.ui.features.TagDetailScreen
+import garden.orto.shared.features.detail.mvi.TagDetailContract
 import garden.orto.shared.features.detail.mvi.TagDetailViewModel
 
 @ExperimentalCoilApi
 @Composable
 fun Navigation(
-    vmTagDetail: TagDetailViewModel
+    vmTagDetail: TagDetailViewModel,
+    uiHomeTagName: String
 ) {
+    val tagDetailNavItem = object : NavItem.TagDetailNavItem(uiHomeTagName) {}
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        // FIXME: HARDCODED
-//        startDestination = NavItem.TagDetail.route
-        startDestination = NavItem.TagDetail.createNavRoute("home")
+        startDestination = tagDetailNavItem.route
     ) {
-        composable(NavItem.TagDetail) {
+        composable(tagDetailNavItem) { backStackEntry ->
+            val tagName = backStackEntry.arguments?.getString("tagName")!!
+            vmTagDetail.setEvent(TagDetailContract.Event.OnGetNotes(tagName))
             TagDetailScreen(
                 onNoteClick = { },
                 viewModel = vmTagDetail
