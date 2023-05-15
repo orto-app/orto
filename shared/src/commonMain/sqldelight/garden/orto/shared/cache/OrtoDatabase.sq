@@ -67,6 +67,9 @@ insertBlock:
 INSERT INTO Block(content)
 VALUES (?);
 
+-- see https://github.com/cashapp/sqldelight/issues/1201 and https://github.com/cashapp/sqldelight/issues/1015
+rowid: SELECT last_insert_rowid();
+
 deleteBlock:
 DELETE FROM Block WHERE id = ?;
 

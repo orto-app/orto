@@ -2,11 +2,11 @@ package garden.orto.shared.cache.local
 
 import garden.orto.TestUtil
 import garden.orto.TestUtil.Companion.ALL_TAGS
-import garden.orto.TestUtil.Companion.SINGLE_BLOCK
 import garden.orto.TestUtil.Companion.SINGLE_TAG
 import garden.orto.TestUtil.Companion.assertEqualsBlocks
 import garden.orto.TestUtil.Companion.assertEqualsTag
 import garden.orto.TestUtil.Companion.assertEqualsTags
+import garden.orto.TestUtil.Companion.makeBlock
 import garden.orto.TestUtil.Companion.makeNow
 import garden.orto.shared.cache.Tag
 import garden.orto.shared.di.TestModules
@@ -32,6 +32,7 @@ class DatabaseTest : KoinTest {
 
     @AfterTest
     fun tearDown() {
+        localDataImp.clearDatabase()
         stopKoin()
     }
 
@@ -109,29 +110,50 @@ class DatabaseTest : KoinTest {
 
     @Test
     fun `createNote creates a block`() {
-        localDataImp.createNote(SINGLE_BLOCK, ALL_TAGS.map { it.name })
-        assertEqualsBlocks(listOf(SINGLE_BLOCK), localDataImp.getAllBlocks())
+        localDataImp.createNote(makeBlock(10L), ALL_TAGS.map { it.name })
+        assertEqualsBlocks(listOf(makeBlock(1L, "content10")), localDataImp.getAllBlocks())
     }
 
     @Test
     fun `createNote creates a sequence of tags`() {
-        localDataImp.createNote(SINGLE_BLOCK, ALL_TAGS.map { it.name })
+        localDataImp.createNote(makeBlock(7L), ALL_TAGS.map { it.name })
         assertEqualsTags(ALL_TAGS, localDataImp.getAllTags())
     }
 
     @Test
     fun `createNote creates the relation between block and tags`() {
-        localDataImp.createNote(SINGLE_BLOCK, ALL_TAGS.map { it.name })
+        localDataImp.createNote(makeBlock(42L), ALL_TAGS.map { it.name })
 
-        val tagList = localDataImp.getTagsForBlock(SINGLE_BLOCK.id)
+        val tagList = localDataImp.getTagsForBlock(1L)
         assertEqualsTags(ALL_TAGS, tagList)
     }
 
     @Test
     fun `createNote creates a reverse relation between tags and block`() {
-        localDataImp.createNote(SINGLE_BLOCK, ALL_TAGS.map { it.name })
+        localDataImp.createNote(makeBlock(90L), ALL_TAGS.map { it.name })
         for (tag in ALL_TAGS) {
-            assertEqualsBlocks(listOf(SINGLE_BLOCK), localDataImp.getBlocksForTag(tag.name))
+            assertEqualsBlocks(listOf(makeBlock(1L, "content90")), localDataImp.getBlocksForTag(tag.name))
+        }
+    }
+
+    @Test
+    fun `createNote used twice creates two notes`() {
+        val expected = mutableListOf(makeBlock(1L, "content5"), makeBlock(2L, "content6"))
+        // createNote is supposed to ignore IDs
+        localDataImp.createNote(makeBlock(5L), ALL_TAGS.map { it.name })
+        localDataImp.createNote(makeBlock(6L), ALL_TAGS.map { it.name })
+
+        assertEqualsBlocks(expected, localDataImp.getAllBlocks())
+
+        assertEqualsTags(ALL_TAGS, localDataImp.getAllTags())
+
+        var tagList = localDataImp.getTagsForBlock(1L)
+        assertEqualsTags(ALL_TAGS, tagList)
+        tagList = localDataImp.getTagsForBlock(2L)
+        assertEqualsTags(ALL_TAGS, tagList)
+
+        for (tag in ALL_TAGS) {
+            assertEqualsBlocks(expected, localDataImp.getBlocksForTag(tag.name))
         }
     }
 

@@ -10,13 +10,6 @@ class TestUtil {
     companion object {
         fun makeNow() = LocalDateTime.parse("2021-03-27T02:16:20")
 
-        val SINGLE_BLOCK = Block(
-            id = 1,
-            content = "Nice content",
-            makeNow(),
-            makeNow()
-        )
-
         val SINGLE_TAG = Tag(id = 1, name = "apples", parent_id = null, makeNow(), makeNow())
 
         val ALL_TAGS = listOf(
@@ -25,7 +18,8 @@ class TestUtil {
             Tag(id = 3, name = "bananas", parent_id = null, makeNow(), makeNow())
         )
 
-        fun makeBlock(long: Long) = Block(long, "content${long}", makeNow(), makeNow())
+        fun makeBlock(long: Long) = makeBlock(long, "content${long}")
+        fun makeBlock(long: Long, content: String) = Block(long, content, makeNow(), makeNow())
         fun makeTag(long: Long) = makeTag(long, "Tag${long}")
         fun makeTag(long: Long, name: String) = Tag(long, name, null, makeNow(), makeNow())
         fun makeNoteState(content: String) = NoteState(id = 0, content = content, tags = listOf())

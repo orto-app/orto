@@ -119,10 +119,11 @@ internal class LocalDataImp(
     override fun createNote(block: Block, tags: Iterable<String>) {
         dbQuery.transaction {
             insertBlock(block)
+            val id = dbQuery.rowid().executeAsOne()
             tags.forEach {
                 val tag = createTagChain(it)
                 dbQuery.insertBlockTagRelation(
-                    block.id,
+                    id,
                     tag.id
                 )
             }
