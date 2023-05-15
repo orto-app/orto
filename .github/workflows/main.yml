@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - refactor_build_system
     paths-ignore:
       - "**/*.md"
   pull_request:
@@ -37,12 +36,7 @@ jobs:
 
       - name: Ios build
         run: |
-          ./gradlew iosX64Test \
-          publishKotlinMultiplatformPublicationToMavenLocal \
-          publishIosArm64PublicationToMavenLocal \
-          publishIosSimulatorArm64PublicationToMavenLocal \
-          publishIosX64PublicationToMavenLocal \
-          --no-daemon --stacktrace
+          ./gradlew :shared:iosX64Test --stacktrace
 
   linux:
     name: Build on linux
@@ -57,8 +51,17 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
           cache: "gradle"
 
-      - name: Android build
+      - name: Android unit tests
         run: |
-          ./gradlew build publishToMavenLocal --no-daemon --stacktrace
+          ./gradlew :shared:testDebugUnitTest --no-daemon --stacktrace
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
+      - name: Build APK
+        run: ./gradlew :androidApp:assembleDebug --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx3g"
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: androidApp/build/outputs/apk/debug/androidApp-debug.apk
