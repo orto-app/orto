@@ -7,6 +7,25 @@ plugins {
     id("com.squareup.sqldelight")
 }
 
+// read values from gradle.properties
+val artifactId: String by project
+val pomDescription: String by project
+val siteUrl: String by project
+val pomLicenseName: String by project
+val pomLicenseUrl: String by project
+val pomLicenseDist: String by project
+val pomDeveloperId: String by project
+val pomDeveloperName: String by project
+val pomOrganizationName: String by project
+val pomOrganizationUrl: String by project
+
+val emptyJavadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
+
+group = Orto.group
+version = Orto.versionName
+
 kotlin {
     jvmToolchain(11)
     android {
@@ -16,8 +35,19 @@ kotlin {
             }
         }
     }
+//    jvm()
+//    linuxX64()
+//    mingwX64()
+//    js(IR) {
+//        jvmToolchain(11)
+//    }
     listOf(
+        // intel
+//        macosX64(),
         iosX64(),
+
+        // apple silicon
+//        macosArm64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -93,6 +123,36 @@ kotlin {
                 }
             }
         }
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        val nativeTest by creating {
+            dependsOn(commonTest)
+        }
+//        val jvmMain by getting {
+//            dependencies {
+//                implementation(Deps.Kotlin.jvm)
+//            }
+//            dependsOn(commonMain)
+//        }
+//        val jvmTest by getting {
+//            dependencies {
+//                implementation(Deps.Test.jvm)
+//            }
+//            dependsOn(commonTest)
+//        }
+//        val jsMain by getting {
+//            dependencies {
+//                implementation(Deps.Kotlin.js)
+//            }
+//            dependsOn(commonMain)
+//        }
+//        val jsTest by getting {
+//            dependencies {
+//                implementation(Deps.Test.js)
+//            }
+//            dependsOn(commonTest)
+//        }
         val androidMain by getting {
             dependencies {
                 with(Deps.KotlinX.Coroutines) {
@@ -108,10 +168,12 @@ kotlin {
                     implementation(android)
                 }
             }
+            dependsOn(commonMain)
         }
         val androidUnitTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
+                implementation(Deps.Test.jvm)
                 //need to add
                 implementation("androidx.test:core:1.5.0")
                 with(Deps.SqlDelight) {
@@ -119,12 +181,20 @@ kotlin {
                 }
             }
         }
+//        val linuxX64Main by getting {
+//            dependsOn(nativeMain)
+//        }
+//        val linuxX64Test by getting {
+//            dependsOn(nativeTest)
+//        }
+//        val mingwX64Main by getting {
+//            dependsOn(nativeMain)
+//        }
+//        val mingwX64Test by getting {
+//            dependsOn(nativeTest)
+//        }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
+        val darwinMain by creating {
             dependencies {
                 with(Deps.Ktor) {
                     implementation(darwin)
@@ -133,23 +203,48 @@ kotlin {
                     implementation(native)
                 }
             }
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+            dependsOn(nativeMain)
         }
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
+        val darwinTest by creating {
             dependencies {
                 with(Deps.SqlDelight) {
                     implementation(native)
                 }
             }
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+            dependsOn(nativeTest)
+        }
+
+        // intel
+//        val macosX64Main by getting {
+//            dependsOn(darwinMain)
+//        }
+//        val macosX64Test by getting {
+//            dependsOn(darwinTest)
+//        }
+        val iosX64Main by getting {
+            dependsOn(darwinMain)
+        }
+        val iosX64Test by getting {
+            dependsOn(darwinTest)
+        }
+        // apple silicon
+//        val macosArm64Main by getting {
+//            dependsOn(darwinMain)
+//        }
+//        val macosArm64Test by getting {
+//            dependsOn(darwinTest)
+//        }
+        val iosArm64Main by getting {
+            dependsOn(darwinMain)
+        }
+        val iosArm64Test by getting {
+            dependsOn(darwinTest)
+        }
+        val iosSimulatorArm64Main by getting {
+            dependsOn(darwinMain)
+        }
+        val iosSimulatorArm64Test by getting {
+            dependsOn(darwinTest)
         }
     }
 }

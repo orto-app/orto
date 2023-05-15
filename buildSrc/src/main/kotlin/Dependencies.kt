@@ -107,6 +107,12 @@ object Deps {
         const val android = "io.insert-koin:koin-android:${Versions.koin}"
     }
 
+    object Kotlin {
+        const val common = "org.jetbrains.kotlin:kotlin-stdlib-common:${Versions.kotlin}"
+        const val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
+        const val js = "org.jetbrains.kotlin:kotlin-stdlib-js:${Versions.kotlin}"
+    }
+
     object KotlinX {
         const val datetime = "org.jetbrains.kotlinx:kotlinx-datetime:${Versions.datetime}"
 
@@ -168,6 +174,12 @@ object Deps {
         const val sqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqldelight}"
         const val android = "com.squareup.sqldelight:android-driver:${Versions.sqldelight}"
         const val native = "com.squareup.sqldelight:native-driver:${Versions.sqldelight}"
+    }
+
+    object Test {
+        const val common = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
+        const val jvm = "org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}"
+        const val js = "org.jetbrains.kotlin:kotlin-test-js:${Versions.kotlin}"
     }
 
 }
